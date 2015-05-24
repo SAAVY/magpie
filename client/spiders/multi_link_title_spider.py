@@ -27,5 +27,14 @@ class MultiLinkTitleSpider(scrapy.Spider):
             item['title'] = title[0]
             print item['title']
 
+        text = Selector(response).xpath("//div[@id='mw-content-text']/p/text() | //div[@id='mw-content-text']/p/b/text() | //div[@id='mw-content-text']/p/a/text()").extract()
+        text_concat = "".join(text)
+        text_concat.encode('ascii', errors='ignore')
+
+        if text:
+            item['text'] = text_concat[:500] + (text_concat[500:] and '..')
+
+        print item['text']
+
         return item
 
