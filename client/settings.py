@@ -15,3 +15,17 @@ NEWSPIDER_MODULE = 'client.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
+
+# FEED_URI = 'stdout:'
+# FEED_FORMAT = 'json'
+# FEED_STORAGES_BASE = {
+#     'stdout': 'scrapy.contrib.feedexport.StdoutFeedStorage'
+# }
+#
+# FEED_EXPORTERS_BASE = {
+#     'json': 'scrapy.contrib.exporter.JsonItemExporter'
+# }
+
+ITEM_PIPELINES = {
+    'client.pipelines.JsonWriterPipeline': 100,
+}

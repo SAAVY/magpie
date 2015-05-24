@@ -27,3 +27,5 @@ class MultiLinkTitleSpider(scrapy.Spider):
             item['title'] = title[0]
             print item['title']
 
+        return item
+
