@@ -32,9 +32,9 @@ class MultiLinkTitleSpider(scrapy.Spider):
         text_concat.encode('ascii', errors='ignore')
 
         if text:
-            item['text'] = text_concat[:500] + (text_concat[500:] and '..')
+            item['description'] = text_concat[:500] + (text_concat[500:] and '..')
 
-        print item['text']
+        print item['description']
 
         return item
 
