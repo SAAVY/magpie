@@ -17,4 +17,5 @@ class JsonWriterPipeline(object):
         # self.file.write(line)
         # return item
         #print item
+        spider.json_line = line
         return item

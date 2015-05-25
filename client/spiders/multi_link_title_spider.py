@@ -9,6 +9,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 
 class MultiLinkTitleSpider(scrapy.Spider):
     name = "wikipeida"
+    json_line = " "
     def __init__(self, **kw):
         super(MultiLinkTitleSpider, self).__init__(**kw)
         self.url = kw.get('url')
