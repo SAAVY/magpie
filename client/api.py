@@ -8,7 +8,7 @@ def hello_world():
     return 'Hello World!'
 
 @app.route('/website', methods=['GET'])
-def websiteToScrape():
+def get_metadata():
     local_scraper = scraper.Scraper(url=request.args.get('src'))
     prop_map = local_scraper.scrape_website()
     json_return = json.dumps(prop_map)
