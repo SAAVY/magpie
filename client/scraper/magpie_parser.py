@@ -1,11 +1,10 @@
 from HTMLParser import HTMLParser
 
 class MagpieParser(HTMLParser):
+    json_return = ""
+    prop_map = {}
+
     def handle_starttag(self, tag, attrs):
-        print "Encountered a start tag:", tag
-
-    def handle_endtag(self, tag):
-        print "Encountered an end tag :", tag
-
-    def handle_data(self, data):
-        print "Encountered some data  :", data
+        if tag == 'meta' and len(attrs) > 1:
+            key = attrs[0][1]
+            self.prop_map[key] = attrs[1][1]
