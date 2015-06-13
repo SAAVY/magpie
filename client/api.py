@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from scraper import scraper
 import json
 app = Flask(__name__)
