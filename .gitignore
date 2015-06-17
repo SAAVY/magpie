@@ -1,5 +1,4 @@
 .idea/
 venv/
 magpievenv/
-
 *.pyc
