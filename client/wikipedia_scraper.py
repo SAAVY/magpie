@@ -1,5 +1,6 @@
 import wikipedia
 import lxml.html
+import sys
 
 
 def scrape(url):
@@ -14,4 +15,4 @@ def scrape(url):
 
 
 if __name__ == "__main__":
-    scrape("http://en.wikipedia.org/wiki/Toronto")
+    scrape("http://en.wikipedia.org/wiki/NP-complete")
