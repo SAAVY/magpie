@@ -1,5 +1,6 @@
 from flask import Flask, request
-from scraper import scraper, wikipedia_scraper
+from scraper import general_metadata, wikipedia_metadata
+import requests
 import json
 app = Flask(__name__)
 
@@ -10,14 +11,13 @@ def hello_world():
 @app.route('/website', methods=['GET'])
 def get_metadata():
     src_url = request.args.get('src')
+    connection = requests.get(src_url)
     if "wikipedia" in src_url:
-        wikipedia_scraper.scrape(url=src_url)
-        return ""
+        scraper = wikipedia_metadata.WikipediaMetadata()
+        return scraper.parse_content(connection.content)
     else:
-        local_scraper = scraper.Scraper(url=request.args.get('src'))
-        prop_map = local_scraper.scrape_website()
-        json_return = json.dumps(prop_map)
-        return json_return
+        scraper = general_metadata.GeneralMetadata()
+        return scraper.parse_content(connection.content)
 
 if __name__ == '__main__':
     app.run(debug=True)
