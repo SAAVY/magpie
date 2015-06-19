@@ -1,5 +1,5 @@
 from flask import Flask, request
-from scraper import general_metadata, wikipedia_metadata
+from scraper import general_metadata, wikipedia_metadata, youtube_metadata
 from constants import UrlTypes
 
 import url_utils
@@ -14,12 +14,14 @@ def get_metadata():
     url = request.args.get('src')
     response = url_utils.get_url_data(url)
     scraper = get_scraper(response)
-    return scraper.parse_content(response.content)
+    return scraper.parse_content(response)
 
 def get_scraper(response):
     scraper = None
     if response.type is UrlTypes.WIKI:
         scraper = wikipedia_metadata.WikipediaMetadata()
+    elif response.type is UrlTypes.YOUTUBE:
+        scraper = youtube_metadata.YoutubeMetadata()
     else:
         scraper = general_metadata.GeneralMetadata()
     return scraper
