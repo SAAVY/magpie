@@ -18,16 +18,17 @@ class StatusCode(object):
 
 
 class UrlTypes(object):
-    WIKI = "wikipedia"
-    GENERAL = "general"
-    DROP_BOX = "dropbox"
-    YOUTUBE = "youtube"
+
     DRIVE = "google drive"
+    DROP_BOX = "dropbox"
+    GENERAL = "general"
+    WIKI = "wikipedia"
+    YOUTUBE = "youtube"
 
     special_urls = {
         WIKI: "en.wikipedia.org"
     }
 
     @staticmethod
-    def get_special_url(type):
-        return UrlTypes.special_urls.get(type)
+    def get_special_url(url_type):
+        return UrlTypes.special_urls.get(url_type)
