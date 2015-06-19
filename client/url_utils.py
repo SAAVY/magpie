@@ -1,24 +1,21 @@
-from httplib import HTTP
 from urlparse import urlparse
-import httplib
 import re
 import requests
-import urllib2
-
 from response import Response
-from constants import StatusCode
+from constants import StatusCode, UrlTypes
 
 
 def get_url_data(url):
     url = validate_url(url)
-
+    url_type = get_url_type(url)
     response = Response()
     try:
         request = requests.get(url)
         # TODO (Alice): differentiate different request data codes (404 etc)
-        response.set_content(request.headers, request.text, request.status_code, url)
+        #Passing in request.content (it's in bytes rather than unicode - which is what request.text gives)
+        response.set_content(request.headers, request.content, request.status_code, url, url_type)
     except Exception, e:
-        response.set_error(StatusCode.BAD_REQUEST, StatusCode.get_status_message(BAD_REQUEST))
+        response.set_error(StatusCode.BAD_REQUEST, StatusCode.get_status_message(StatusCode.BAD_REQUEST))
     finally:
         pass
 
@@ -32,4 +29,8 @@ def validate_url(url):
 
     return parsed_url.geturl()
 
-
+def get_url_type(url):
+    if UrlTypes.get_special_url(UrlTypes.WIKI) in url:
+        return UrlTypes.WIKI
+    else:
+        return UrlTypes.GENERAL
