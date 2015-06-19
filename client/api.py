@@ -1,9 +1,7 @@
 from flask import Flask, request
 from scraper import general_metadata, wikipedia_metadata
-import json
-import requests
+from constants import UrlTypes
 
-from response import Response
 import url_utils
 
 app = Flask(__name__)
@@ -14,17 +12,17 @@ is_dev = True
 @app.route('/website', methods=['GET'])
 def get_metadata():
     url = request.args.get('src')
-    response =  url_utils.get_url_data(url)
-    # TODO(Meenu): Scraper must take in a response object and not a url
-    connection = requests.get(response.url)
-    if "wikipedia" in response.url:
+    response = url_utils.get_url_data(url)
+    scraper = get_scraper(response)
+    return scraper.parse_content(response.content)
+
+def get_scraper(response):
+    scraper = None
+    if response.type is UrlTypes.WIKI:
         scraper = wikipedia_metadata.WikipediaMetadata()
-        return scraper.parse_content(connection.content)
     else:
         scraper = general_metadata.GeneralMetadata()
-        return scraper.parse_content(connection.content)
-
-    return json_return
+    return scraper
 
 if __name__ == '__main__':
     app.run(debug=is_dev)

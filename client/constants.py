@@ -14,4 +14,20 @@ class StatusCode(object):
 
     @staticmethod
     def get_status_message(code):
-        return status_codes.get(code)
+        return StatusCode.status_codes.get(code)
+
+
+class UrlTypes(object):
+    WIKI = "wikipedia"
+    GENERAL = "general"
+    DROP_BOX = "dropbox"
+    YOUTUBE = "youtube"
+    DRIVE = "google drive"
+
+    special_urls = {
+        WIKI: "en.wikipedia.org"
+    }
+
+    @staticmethod
+    def get_special_url(type):
+        return UrlTypes.special_urls.get(type)
