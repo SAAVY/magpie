@@ -12,14 +12,15 @@ def get_url_data(url):
     try:
         request = requests.get(url)
         # TODO (Alice): differentiate different request data codes (404 etc)
-        #Passing in request.content (it's in bytes rather than unicode - which is what request.text gives)
+        # Passing in request.content (it's in bytes rather than unicode - which is what request.text gives)
         response.set_content(request.headers, request.content, request.status_code, url, url_type)
-    except Exception, e:
+    except Exception:
         response.set_error(StatusCode.BAD_REQUEST, StatusCode.get_status_message(StatusCode.BAD_REQUEST))
     finally:
         pass
 
     return response
+
 
 def validate_url(url):
     parsed_url = urlparse(url)
@@ -28,6 +29,7 @@ def validate_url(url):
         parsed_url = urlparse(url)
 
     return parsed_url.geturl()
+
 
 def get_url_type(url):
     if UrlTypes.get_special_url(UrlTypes.WIKI) in url:
