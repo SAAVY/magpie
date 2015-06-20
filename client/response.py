@@ -7,7 +7,7 @@ class Response:
         self.response_code = None
         self.url = None
         self.type = None
-    
+
     def set_content(self, header, content, code, url, type):
         self.content = content
         self.header = header

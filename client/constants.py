@@ -5,7 +5,6 @@ class StatusCode(object):
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
 
-
     status_codes = {OK: "OK",
                     NOT_FOUND: "Not Found",
                     INTERNAL_SERVER_ERROR: "Internal Server Error",
