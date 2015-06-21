@@ -8,8 +8,8 @@ class WikipediaMetadata(Metadata):
 
     prop_map = {}
 
-    def parse_content(self, content):
-        document = lxml.html.fromstring(content)
+    def parse_content(self, response):
+        document = lxml.html.fromstring(response.content)
         title = document.find(".//title").text
 
         page = wikipedia.page(title)

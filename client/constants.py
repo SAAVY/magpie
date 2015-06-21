@@ -25,7 +25,8 @@ class UrlTypes(object):
     YOUTUBE = "youtube"
 
     special_urls = {
-        WIKI: "en.wikipedia.org"
+        WIKI: "en.wikipedia.org",
+        YOUTUBE: "youtube.com"
     }
 
     @staticmethod

@@ -34,5 +34,7 @@ def validate_url(url):
 def get_url_type(url):
     if UrlTypes.get_special_url(UrlTypes.WIKI) in url:
         return UrlTypes.WIKI
+    elif UrlTypes.get_special_url(UrlTypes.YOUTUBE) in url:
+        return UrlTypes.YOUTUBE
     else:
         return UrlTypes.GENERAL

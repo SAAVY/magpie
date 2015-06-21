@@ -2,3 +2,4 @@
 venv/
 magpievenv/
 *.pyc
+*.DS_Store
