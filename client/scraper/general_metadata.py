@@ -1,6 +1,7 @@
 from HTMLParser import HTMLParser
-from metadata import Metadata
 import json
+
+from metadata import Metadata
 
 
 class GeneralMetadata(Metadata, HTMLParser):

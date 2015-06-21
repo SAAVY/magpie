@@ -1,7 +1,9 @@
+import json
+
 import wikipedia
 import lxml.html
+
 from metadata import Metadata
-import json
 
 
 class WikipediaMetadata(Metadata):
