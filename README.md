@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/SAAVY/magpie.svg?branch=master)](https://travis-ci.org/SAAVY/magpie)
+
 # Project Magpie
 
 Magpie is an API aimed display embedded content without the developer having to parse the website. 
