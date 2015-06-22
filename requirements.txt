@@ -1,5 +1,6 @@
 flake8
 flask==0.10.1
 lxml
+nose
 requests
 wikipedia
