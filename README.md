@@ -49,5 +49,8 @@ This should include examples of JSON response and requests
 
 # <a name="contrib"></a>Contributing
 
-[See CONTRIBUTING.md](CONTRIBUTING.md)
+To contribute to our project, [see CONTRIBUTING guidelines](CONTRIBUTING.md).
 
+# <a name="contrib"></a>License
+
+Magpie is licensed under MIT License
