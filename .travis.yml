@@ -4,9 +4,8 @@ python:
 env:
   - FLASK=0.10.1
 install:
-  - pip install -q flask==$FLASK --use-mirrors
-  - pip install -r requirements.txt
+  - ./install.sh
 script:
-  - flake8 client
+  - ./build.sh
 notifications:
   slack: fydpsaavy:haAycUdAeGxxztOPa095IpHl

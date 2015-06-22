@@ -5,6 +5,7 @@ import urllib
 
 request_url = "http://www.youtube.com/oembed?url="
 
+
 class YoutubeMetadata(Metadata):
     prop_map = {}
 
