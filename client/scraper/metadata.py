@@ -1,6 +1,3 @@
-__author__ = 'meenu'
-
-
 class Metadata:
 
     def parse_content(self, response):

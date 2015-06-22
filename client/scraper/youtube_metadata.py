@@ -3,6 +3,7 @@ from metadata import Metadata
 import json
 import urllib
 
+
 request_url = "http://www.youtube.com/oembed?url="
 
 

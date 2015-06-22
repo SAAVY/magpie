@@ -1,7 +1,8 @@
-from flask import Flask, request
-from scraper import general_metadata, wikipedia_metadata, youtube_metadata
-from constants import UrlTypes
+from flask import Flask
+from flask import request
 
+from constants import UrlTypes
+from scraper import general_metadata, wikipedia_metadata, youtube_metadata
 import url_utils
 
 app = Flask(__name__)

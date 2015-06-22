@@ -1,8 +1,10 @@
 from urlparse import urlparse
-import re
+import re  # regular expressions
 import requests
+
+from constants import StatusCode
+from constants import UrlTypes
 from response import Response
-from constants import StatusCode, UrlTypes
 
 
 def get_url_data(url):
