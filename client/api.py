@@ -11,6 +11,11 @@ app = Flask(__name__)
 is_dev = True
 
 
+@app.route('/')
+def home_page():
+    return ""
+
+
 @app.route('/website', methods=['GET'])
 def get_metadata():
     url = request.args.get('src')
