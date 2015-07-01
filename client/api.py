@@ -1,9 +1,9 @@
 from flask import Flask
 from flask import request
 
-from constants import UrlTypes
-from scraper import general_metadata, wikipedia_metadata, youtube_metadata
-import url_utils
+import api_handler
+from client.constants import ResponseType
+
 
 app = Flask(__name__)
 
@@ -18,21 +18,13 @@ def home_page():
 
 @app.route('/website', methods=['GET'])
 def get_metadata():
+    local_request = request
     url = request.args.get('src')
-    response = url_utils.get_url_data(url)
-    scraper = get_scraper(response)
-    return scraper.parse_content(response)
+    response_type = local_request.args.get('format')
+    if response_type is None:
+        response_type = ResponseType.JSON  # Default return format is json
+    return api_handler.get_metadata(url, response_type)
 
-
-def get_scraper(response):
-    scraper = None
-    if response.type is UrlTypes.WIKI:
-        scraper = wikipedia_metadata.WikipediaMetadata()
-    elif response.type is UrlTypes.YOUTUBE:
-        scraper = youtube_metadata.YoutubeMetadata()
-    else:
-        scraper = general_metadata.GeneralMetadata()
-    return scraper
 
 if __name__ == '__main__':
     app.run(debug=is_dev)
