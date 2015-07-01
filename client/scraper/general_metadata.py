@@ -9,7 +9,7 @@ class GeneralMetadata(Metadata, HTMLParser):
     prop_map = {}
 
     def parse_content(self, content):
-        self.feed(content)
+        self.feed(content.content)
         return self.to_json(self.prop_map)
 
     def handle_starttag(self, tag, attrs):
