@@ -4,7 +4,6 @@ from client.constants import FieldKeyword
 from client.constants import FieldValue
 from metadata import Metadata
 
-
 request_url = "http://www.youtube.com/oembed?url="
 
 
