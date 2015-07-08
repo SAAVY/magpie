@@ -19,16 +19,17 @@ class StatusCode(object):
 class UrlTypes(object):
 
     DRIVE = "google drive"
-    DROP_BOX = "dropbox"
+    DROPBOX = "dropbox"
     GENERAL = "general"
     WIKI = "wikipedia"
     YOUTUBE = "youtube"
     DOCS = "google docs"
 
     special_urls = {
+        DOCS: "docs.google.com",
+        DROPBOX: "dropbox.com",
         WIKI: "wikipedia.org",
-        YOUTUBE: "youtube.com",
-        DOCS: "docs.google.com"
+        YOUTUBE: "youtube.com"
     }
 
     @staticmethod
@@ -59,6 +60,7 @@ class MediaTypeValue(object):
 
 
 class FileTypeValue(object):
+    NONE = "none"
     PDF = "pdf"
 
 
