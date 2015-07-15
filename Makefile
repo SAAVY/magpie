@@ -7,10 +7,10 @@ build:
 	./build.sh
 
 dev:
-	python client/api.py
+	PYTHONPATH=. python client/api.py
 
 prod:
-	python client/api.py
+	PYTHONPATH=. python client/api.py
 
 clean:
-	rm -r *.pyc
+	find . -name "*.pyc" -exec rm -rf {} \;

@@ -8,7 +8,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 
-echo -e "${BOLD}================== BEGIN BUILD ====================${NC}"
+echo -e "${BOLD}================== CHECK VIRTUAL ENV ====================${NC}"
 python -c 'import sys; print sys.real_prefix' 2>/dev/null && INVENV=1 || INVENV=0
 if [ $INVENV -eq 0 ]; then
 	echo -e "${RED}ERROR: Not in virtual env! Source env by doing . venv/bin/activate${NC}";
@@ -24,6 +24,7 @@ if [ ! -z "$linter_output" ]; then
 fi	
 echo -e "${BOLD}================== END LINTER ====================${NC}"
 echo
+
 echo -e "${BOLD}================== COMPILING FILES ====================${NC}"
 find . -name \*.pyc -delete
 python -m py_compile client/api.py
