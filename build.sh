@@ -28,4 +28,12 @@ echo
 echo -e "${BOLD}================== COMPILING FILES ====================${NC}"
 find . -name \*.pyc -delete
 python -m py_compile client/api.py
+echo -e "${BOLD}================== END COMPILE ====================${NC}"
+echo
+
+echo -e "${BOLD}================== RUNNING TESTS ====================${NC}"
+nosetests test
+echo -e "${BOLD}================== END TESTS ====================${NC}"
+echo
+
 echo -e "${BOLD}================== BUILD COMPLETE ====================${NC}"

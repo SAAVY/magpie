@@ -12,5 +12,8 @@ dev:
 prod:
 	PYTHONPATH=. python client/api.py
 
+tests:
+	nosetests test
+
 clean:
 	find . -name "*.pyc" -exec rm -rf {} \;

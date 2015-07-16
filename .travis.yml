@@ -7,6 +7,5 @@ install:
   - ./install.sh
 script:
   - ./build.sh
-  - nosetests
 notifications:
   slack: fydpsaavy:haAycUdAeGxxztOPa095IpHl
