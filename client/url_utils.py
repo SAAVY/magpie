@@ -1,6 +1,6 @@
-from urlparse import urlparse
 import re  # regular expressions
 import requests
+from urlparse import urlparse
 
 from constants import StatusCode
 from constants import UrlTypes
@@ -8,16 +8,16 @@ from response import Response
 
 
 def get_url_data(url):
-    url = validate_url(url)
-    url_type = get_url_type(url)
+    sanitized_url = validate_url(url)
+    url_type = get_url_type(sanitized_url)
     response = Response()
     try:
-        request = requests.get(url)
+        request = requests.get(sanitized_url)
         # TODO (Alice): differentiate different request data codes (404 etc)
         # Passing in request.content (it's in bytes rather than unicode - which is what request.text gives)
-        response.set_content(request.headers, request.content, request.status_code, url, url_type)
+        response.set_content(request.headers, request.content, request.status_code, url, sanitized_url, url_type)
     except Exception:
-        response.set_error(StatusCode.BAD_REQUEST, StatusCode.get_status_message(StatusCode.BAD_REQUEST))
+        response.set_error(StatusCode.BAD_REQUEST, StatusCode.get_status_message(StatusCode.BAD_REQUEST), url)
     finally:
         pass
 

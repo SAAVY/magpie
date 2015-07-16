@@ -1,3 +1,6 @@
+from client.constants import StatusCode
+
+
 class Response:
     def __init__(self):
         self.code = None
@@ -5,16 +8,20 @@ class Response:
         self.error_msg = None
         self.header = None
         self.response_code = None
-        self.url = None
+        self.sanitized_url = None
         self.type = None
+        self.url = None
 
-    def set_content(self, header, content, code, url, type):
+    def set_content(self, header, content, code, url, sanitized_url, type):
+        self.code = StatusCode.OK
         self.content = content
         self.header = header
         self.response_code = code
-        self.url = url
+        self.sanitized_url = sanitized_url
         self.type = type
+        self.url = url
 
-    def set_error(self, code, error_msg):
+    def set_error(self, code, error_msg, url):
         self.code = code
         self.error_msg = error_msg
+        self.url = url
