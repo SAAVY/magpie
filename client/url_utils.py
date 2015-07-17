@@ -36,6 +36,8 @@ def validate_url(url):
 def get_url_type(url):
     if UrlTypes.get_special_url(UrlTypes.DOCS) in url:
         return UrlTypes.DOCS
+    elif UrlTypes.get_special_url(UrlTypes.DROPBOX) in url:
+        return UrlTypes.DROPBOX
     elif UrlTypes.get_special_url(UrlTypes.WIKI) in url:
         return UrlTypes.WIKI
     elif UrlTypes.get_special_url(UrlTypes.YOUTUBE) in url:

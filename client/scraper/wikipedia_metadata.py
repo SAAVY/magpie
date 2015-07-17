@@ -1,3 +1,4 @@
+import collections
 import re
 
 import lxml.html
@@ -26,7 +27,7 @@ class WikipediaMetadata(Metadata):
         media_list[FieldKeyword.COUNT] = img_count
         data = []
         for image in page.images[:img_count]:
-            media_item = {}
+            media_item = collections.OrderedDict()
             media_item[FieldKeyword.TYPE] = MediaTypeValue.IMAGE
             media_item[FieldKeyword.SRC] = image
             data.append(media_item)

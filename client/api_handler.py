@@ -2,6 +2,7 @@ from constants import ResponseType
 from constants import StatusCode
 from constants import UrlTypes
 from scraper import drive_metadata
+from scraper import dropbox_metadata
 from scraper import error_metadata
 from scraper import general_metadata
 from scraper import wikipedia_metadata
@@ -25,6 +26,8 @@ def get_scraper(response):
         return error_metadata.ErrorMetadata(response)
     elif response.type is UrlTypes.DOCS:
         return drive_metadata.DriveMetadata(response)
+    elif response.type is UrlTypes.DROPBOX:
+        return dropbox_metadata.DropboxMetadata(response)
     elif response.type is UrlTypes.WIKI:
         return wikipedia_metadata.WikipediaMetadata(response)
     elif response.type is UrlTypes.YOUTUBE:
