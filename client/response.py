@@ -11,8 +11,9 @@ class Response:
         self.sanitized_url = None
         self.type = None
         self.url = None
+        self.domain_url = None
 
-    def set_content(self, header, content, code, url, sanitized_url, type):
+    def set_content(self, header, content, code, url, sanitized_url, type, domain_url):
         self.code = StatusCode.OK
         self.content = content
         self.header = header
@@ -20,6 +21,7 @@ class Response:
         self.sanitized_url = sanitized_url
         self.type = type
         self.url = url
+        self.domain_url = domain_url
 
     def set_error(self, code, error_msg, url):
         self.code = code
