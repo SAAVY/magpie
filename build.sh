@@ -18,8 +18,8 @@ fi
 echo -e "${BOLD}================== RUNNING LINTER ====================${NC}"
 linter_output=$(flake8 . --statistics)
 if [ ! -z "$linter_output" ]; then
-	echo -e "${RED}FLAKE8 LINTER ERRORS:${NC}";
-	echo -e "${YELLOW}$linter_output${NC}"
+	echo -e "${BOLD}${RED}FLAKE8 LINTER ERRORS:${NC}";
+	echo -e "${BOLD}${YELLOW}$linter_output${NC}"
 	exit 1;
 fi	
 echo -e "${BOLD}================== END LINTER ====================${NC}"
@@ -33,6 +33,11 @@ echo
 
 echo -e "${BOLD}================== RUNNING TESTS ====================${NC}"
 nosetests test
+code=$?
+if [ "$code" != "0" ]; then
+	echo -e "${BOLD}${RED}NOT ALL UNIT TESTS PASSED!${NC}";
+	exit 1;
+fi	
 echo -e "${BOLD}================== END TESTS ====================${NC}"
 echo
 
