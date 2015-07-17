@@ -1,7 +1,7 @@
 import requests
 
 from client.constants import FieldKeyword
-from client.constants import FieldValue
+from client.constants import MediaTypeValue
 from metadata import Metadata
 
 request_url = "http://www.youtube.com/oembed?url="
@@ -21,11 +21,11 @@ class YoutubeMetadata(Metadata):
         media_list = {}
         media_list[FieldKeyword.DATA] = [
             {
-                FieldKeyword.TYPE: FieldValue.IMAGE,
+                FieldKeyword.TYPE: MediaTypeValue.IMAGE,
                 FieldKeyword.SRC: data["thumbnail_url"]
             },
             {
-                FieldKeyword.TYPE: FieldValue.VIDEO,
+                FieldKeyword.TYPE: MediaTypeValue.VIDEO,
                 FieldKeyword.IFRAME: data["html"]
             }]
         media_list[FieldKeyword.COUNT] = 2

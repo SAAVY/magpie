@@ -4,7 +4,7 @@ import lxml.html
 import wikipedia
 
 from client.constants import FieldKeyword
-from client.constants import FieldValue
+from client.constants import MediaTypeValue
 from metadata import Metadata
 
 
@@ -27,7 +27,7 @@ class WikipediaMetadata(Metadata):
         data = []
         for image in page.images[:img_count]:
             media_item = {}
-            media_item[FieldKeyword.TYPE] = FieldValue.IMAGE
+            media_item[FieldKeyword.TYPE] = MediaTypeValue.IMAGE
             media_item[FieldKeyword.SRC] = image
             data.append(media_item)
 

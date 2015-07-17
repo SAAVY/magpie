@@ -23,10 +23,12 @@ class UrlTypes(object):
     GENERAL = "general"
     WIKI = "wikipedia"
     YOUTUBE = "youtube"
+    DOCS = "google docs"
 
     special_urls = {
         WIKI: "wikipedia.org",
-        YOUTUBE: "youtube.com"
+        YOUTUBE: "youtube.com",
+        DOCS: "docs.google.com"
     }
 
     @staticmethod
@@ -38,7 +40,9 @@ class FieldKeyword(object):
     COUNT = "count"
     DATA = "data"
     DESC = "description"
+    DOWNLOAD_URL = "download_url"
     ERROR_MSG = "error_message"
+    FILES = "files"
     IFRAME = "iframe"
     MEDIA = "media"
     SANITIZED_URL = "sanitized_url"
@@ -49,9 +53,13 @@ class FieldKeyword(object):
     URL = "url"
 
 
-class FieldValue(object):
+class MediaTypeValue(object):
     IMAGE = "image"
     VIDEO = "video"
+
+
+class FileTypeValue(object):
+    PDF = "pdf"
 
 
 class MetadataFields(object):
