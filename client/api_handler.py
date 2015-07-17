@@ -1,6 +1,7 @@
 from constants import ResponseType
 from constants import StatusCode
 from constants import UrlTypes
+from scraper import drive_metadata
 from scraper import error_metadata
 from scraper import general_metadata
 from scraper import wikipedia_metadata
@@ -22,6 +23,8 @@ def get_json_metadata(scraper):
 def get_scraper(response):
     if response.code != StatusCode.OK:
         return error_metadata.ErrorMetadata(response)
+    elif response.type is UrlTypes.DOCS:
+        return drive_metadata.DriveMetadata(response)
     elif response.type is UrlTypes.WIKI:
         return wikipedia_metadata.WikipediaMetadata(response)
     elif response.type is UrlTypes.YOUTUBE:
