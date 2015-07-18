@@ -32,7 +32,7 @@ echo -e "${BOLD}================== END COMPILE ====================${NC}"
 echo
 
 echo -e "${BOLD}================== RUNNING TESTS ====================${NC}"
-nosetests test
+PYTHONPATH=. nosetests test
 code=$?
 if [ "$code" != "0" ]; then
 	echo -e "${BOLD}${RED}NOT ALL UNIT TESTS PASSED!${NC}";

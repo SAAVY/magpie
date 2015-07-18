@@ -1,5 +1,4 @@
 from constants import ResponseType
-from constants import StatusCode
 from constants import UrlTypes
 from scraper import drive_metadata
 from scraper import dropbox_metadata
@@ -11,27 +10,37 @@ import url_utils
 
 
 def get_metadata(url, response_type):
-    validated_response = url_utils.get_url_data(url)
-    scraper = get_scraper(validated_response)
+    sanitized_url = url_utils.sanitize_url(url)
+    # check response status of website
+    head = url_utils.get_requests_header(sanitized_url)
+
+    code = url_utils.get_url_response_code(head)
+
+    sanitized_url = url_utils.get_redirect_url(head)
+
+    metadata = create_metadata_object(url, code, sanitized_url)
+
+    # return response based on response type
     if response_type == ResponseType.JSON:
-        return get_json_metadata(scraper)
+        return get_json_metadata(metadata)
 
 
-def get_json_metadata(scraper):
-    return scraper.to_json()
+def get_json_metadata(metadata):
+    return metadata.to_json()
 
 
-def get_scraper(response):
-    if response.code != StatusCode.OK:
-        return error_metadata.ErrorMetadata(response)
-    elif response.type is UrlTypes.DOCS:
-        return drive_metadata.DriveMetadata(response)
-    elif response.type is UrlTypes.DROPBOX:
-        return dropbox_metadata.DropboxMetadata(response)
-    elif response.type is UrlTypes.WIKI:
-        return wikipedia_metadata.WikipediaMetadata(response)
-    elif response.type is UrlTypes.YOUTUBE:
-        return youtube_metadata.YoutubeMetadata(response)
-    else:
-        return general_metadata.GeneralMetadata(response)
+def create_metadata_object(url, response_code, sanitized_url):
+    url_type = url_utils.get_url_type(sanitized_url, response_code)
+    if url_type is UrlTypes.ERROR:
+        return error_metadata.ErrorMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.DOCS:
+        return drive_metadata.DriveMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.DROPBOX:
+        return dropbox_metadata.DropboxMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.WIKI:
+        return wikipedia_metadata.WikipediaMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.YOUTUBE:
+        return youtube_metadata.YoutubeMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.GENERAL:
+        return general_metadata.GeneralMetadata(url, response_code, sanitized_url)
     return None

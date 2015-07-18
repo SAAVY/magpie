@@ -13,7 +13,7 @@ prod:
 	PYTHONPATH=. python client/api.py
 
 tests:
-	nosetests test
+	PYTHONPATH=. nosetests test
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} \;

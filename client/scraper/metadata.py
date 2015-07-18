@@ -2,63 +2,108 @@ import collections
 import json
 
 from bs4 import BeautifulSoup
-from flask import Response
+from flask import Response as FlaskResponse
+import requests
 
+from client import url_utils
 from client.constants import FieldKeyword
 from client.constants import MetadataFields
 from client.constants import StatusCode
+from client.response import Response
 
 
 class Metadata:
 
-    def __init__(self, response):
+    def __init__(self, url, response_code, sanitized_url):
         self.prop_map = collections.OrderedDict()
-        self.prop_map[FieldKeyword.STATUS] = response.code
+        self.prop_map[FieldKeyword.REQUEST_URL] = url
+        response = self.fetch_site_data(sanitized_url, response_code)
+        self.prop_map[FieldKeyword.STATUS] = response_code
         self.prop_map[FieldKeyword.URL] = response.sanitized_url
-        self.prop_map[FieldKeyword.REQUEST_URL] = response.url
-        self.prop_map[FieldKeyword.DOMAIN_URL] = response.domain_url
+        self.prop_map[FieldKeyword.PROVIDER_URL] = response.provider_url
         self.parse_content(response)
 
+    def fetch_site_data(self, sanitized_url, status_code):
+        """
+        fetch_site_data makes a http request to website stated to get website content.
+        This method should be the only method that makes network calls.
+
+        You may call generic_fetch_content to help with initial fetch of data
+
+        Args:
+            url: The sanitized request url
+            status_code: The HTTP reponse code of the site
+        Returns:
+            a Response object with the data
+        Raises:
+            NotImplementedError if subclasses does not implement method
+        """
+        raise NotImplementedError("Every metadata scraper must implement fetch_site_data")
+
     def parse_content(self, response):
+        """
+        parse_content makes a http request to website stated to get website content.
+        This method should be the only method that makes network calls.
+
+        You may call generic_parse_content to help with initial parsing of data
+
+        Args:
+            response: The unsanitized request url
+        Returns:
+            None
+        Raises:
+            NotImplementedError if subclasses does not implement method
+        """
         raise NotImplementedError("Every metadata scraper must implement parse_content")
 
     def to_json(self):
         json_data = json.dumps(self.prop_map)
-        response = Response(response=json_data, status=StatusCode.OK, mimetype="application/json")
+        response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
         return response
 
     def get_title(self, soup):
-        title = soup.findAll(attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})
-        if len(title) == 0:
-            title = soup.findAll(attrs={MetadataFields.NAME: MetadataFields.TITLE})
-        if len(title) == 0:
-            title = soup.html.head.title
-            if not title:
-                return None
-            return soup.html.head.title.string
-        return title[0]['content'].encode('utf-8')
+        title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})
+        title = None
+        if len(title_html) == 0:
+            title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.NAME: MetadataFields.TITLE})
+        if len(title_html) == 0:
+            if soup.html.head and soup.html.head.title:
+                title = soup.html.head.title.string
+        for i in range(len(title_html)):
+            if title_html[i].has_attr('content'):
+                title = title_html[i]['content'].encode('utf-8')
+                break
+        return title
 
     def get_desc(self, soup):
-        desc = soup.findAll(attrs={MetadataFields.PROPERTY: MetadataFields.OG_DESC})
-        if len(desc) == 0:
-            desc = soup.findAll(attrs={MetadataFields.NAME: MetadataFields.DESCRIPTION})
-        if len(desc) == 0:
-            return None
-        return desc[0]['content'].encode('utf-8')
+        desc_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_DESC})
+        desc = None
+        if len(desc_html) == 0:
+            desc_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.NAME: MetadataFields.DESCRIPTION})
+            if len(desc_html) == 0:
+                desc = None
+        for i in range(len(desc_html)):
+            if desc_html[i].has_attr('content'):
+                desc = desc_html[i]['content'].encode('utf-8')
+                break
+        return desc
 
     def get_images_list(self, soup):
         images_list = collections.OrderedDict()
-        image_urls = soup.findAll(attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
+        image_urls = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
         if len(image_urls) == 0:
             return None
-        images_list[FieldKeyword.COUNT] = len(image_urls)
+        images_list[FieldKeyword.COUNT] = 0
         images_list[FieldKeyword.DATA] = []
         for i in range(len(image_urls)):
             image_item_dict = collections.OrderedDict()
-            image_item_dict[FieldKeyword.URL] = image_urls[i]['content'].encode('utf-8')
-            images_list[FieldKeyword.DATA].append(image_item_dict)
-
-        return images_list
+            if image_urls[i].has_attr('content'):
+                image_item_dict[FieldKeyword.URL] = image_urls[i]['content'].encode('utf-8')
+                images_list[FieldKeyword.DATA].append(image_item_dict)
+                images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
+        if images_list[FieldKeyword.COUNT] > 0:
+            return images_list
+        return None
 
     def get_favicon_url(self, soup):
         icon_link = None
@@ -69,7 +114,18 @@ class Metadata:
             icon_link = icon_field['href'].encode('utf-8')
         return icon_link
 
-    def general_parse_content(self, response):
+    def generic_fetch_content(self, sanitized_url, status_code):
+        response = Response()
+
+        request = requests.get(sanitized_url)
+        redirect_url = request.url
+        sanitized_url = url_utils.remove_url_fragments(redirect_url)
+
+        provider_url = url_utils.get_domain_url(sanitized_url)
+        response.set_content(request.headers, request.content, request.status_code, sanitized_url, provider_url)
+        return response
+
+    def generic_parse_content(self, response):
         soup = BeautifulSoup(response.content)
         title = self.get_title(soup)
         desc = self.get_desc(soup)

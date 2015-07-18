@@ -1,20 +1,24 @@
-import requests
+import json
 
 from client.constants import FieldKeyword
 from client.constants import MediaTypeValue
 from metadata import Metadata
 
-request_url = "http://www.youtube.com/oembed?url="
+
+youtube_request_url = "http://www.youtube.com/oembed?url="
 
 
 class YoutubeMetadata(Metadata):
 
-    def parse_content(self, response):
-        self.general_parse_content(response)
+    def fetch_site_data(self, sanitized_url, status_code):
+        request_url = youtube_request_url + sanitized_url
+        return self.generic_fetch_content(request_url, status_code)
 
-        request = request_url + response.url
-        resp = requests.get(request)
-        data = resp.json()
+    def parse_content(self, response):
+        """
+        The youtube metadata parse_content does not call generic_parse_content, since the response is a JSON object
+        """
+        data = json.loads(response.content)
 
         self.prop_map[FieldKeyword.TITLE] = data["title"]
         images_list = {}
