@@ -41,17 +41,20 @@ class FieldKeyword(object):
     COUNT = "count"
     DATA = "data"
     DESC = "description"
-    DOWNLOAD_URL = "download_url"
+    DOMAIN_URL = "domain_url"
     ERROR_MSG = "error_message"
     FILES = "files"
+    HEIGHT = "height"
     IFRAME = "iframe"
+    IMAGES = "images"
     MEDIA = "media"
-    SANITIZED_URL = "sanitized_url"
-    SRC = "source"
     STATUS = "status"
     TITLE = "title"
     TYPE = "type"
     URL = "url"
+    REQUEST_URL = "request_url"
+    FAVICON = "favicon"
+    WIDTH = "width"
 
 
 class MediaTypeValue(object):
@@ -72,6 +75,8 @@ class MetadataFields(object):
     OG_TITLE = "og:title"
     PROPERTY = "property"
     TITLE = "title"
+    LINK = "link"
+    REL = "rel"
 
 
 class ResponseType(object):

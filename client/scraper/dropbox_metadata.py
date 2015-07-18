@@ -3,7 +3,6 @@ from urllib import urlencode
 from urlparse import parse_qs, urlsplit, urlunsplit
 
 from client.constants import FieldKeyword
-from client.constants import FileTypeValue
 from metadata import Metadata
 
 
@@ -28,7 +27,7 @@ class DropboxMetadata(Metadata):
         file_list[FieldKeyword.DATA] = [
             {
                 FieldKeyword.URL: self.get_download_url(response.url),
-                FieldKeyword.TYPE: FileTypeValue.NONE
+                FieldKeyword.TYPE: None
             }]
 
         self.prop_map[FieldKeyword.FILES] = file_list

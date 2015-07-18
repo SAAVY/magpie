@@ -10,23 +10,30 @@ request_url = "http://www.youtube.com/oembed?url="
 class YoutubeMetadata(Metadata):
 
     def parse_content(self, response):
+        self.general_parse_content(response)
+
         request = request_url + response.url
         resp = requests.get(request)
         data = resp.json()
 
-        self.prop_map[FieldKeyword.URL] = response.url
-        self.prop_map[FieldKeyword.SANITIZED_URL] = response.sanitized_url
-
         self.prop_map[FieldKeyword.TITLE] = data["title"]
+        images_list = {}
+        images_list[FieldKeyword.DATA] = [
+            {
+                FieldKeyword.URL: data["thumbnail_url"],
+                FieldKeyword.HEIGHT: data["thumbnail_height"],
+                FieldKeyword.WIDTH: data["thumbnail_width"]
+            }]
+
         media_list = {}
         media_list[FieldKeyword.DATA] = [
             {
-                FieldKeyword.TYPE: MediaTypeValue.IMAGE,
-                FieldKeyword.SRC: data["thumbnail_url"]
-            },
-            {
+                FieldKeyword.URL: None,
                 FieldKeyword.TYPE: MediaTypeValue.VIDEO,
                 FieldKeyword.IFRAME: data["html"]
             }]
-        media_list[FieldKeyword.COUNT] = 2
+        images_list[FieldKeyword.COUNT] = len(images_list[FieldKeyword.DATA])
+        self.prop_map[FieldKeyword.IMAGES] = images_list
+
+        media_list[FieldKeyword.COUNT] = len(media_list[FieldKeyword.DATA])
         self.prop_map[FieldKeyword.MEDIA] = media_list
