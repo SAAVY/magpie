@@ -2,14 +2,18 @@ class StatusCode(object):
     OK = 200
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
+    FORBIDDEN = 403
     NOT_FOUND = 404
     INTERNAL_SERVER_ERROR = 500
+    WEBSITE_REQUEST_ERROR = 550
 
     status_codes = {OK: "OK",
-                    NOT_FOUND: "Not Found",
+                    NOT_FOUND: "Page Not Found",
                     INTERNAL_SERVER_ERROR: "Internal Server Error",
                     BAD_REQUEST: "Bad Request",
-                    UNAUTHORIZED: "Unauthorized"}
+                    UNAUTHORIZED: "Unauthorized",
+                    FORBIDDEN: "Forbidden",
+                    WEBSITE_REQUEST_ERROR: "Website Request Error"}
 
     @staticmethod
     def get_status_message(code):
@@ -24,6 +28,7 @@ class UrlTypes(object):
     WIKI = "wikipedia"
     YOUTUBE = "youtube"
     DOCS = "google docs"
+    ERROR = "error"
 
     special_urls = {
         DOCS: "docs.google.com",
@@ -41,7 +46,7 @@ class FieldKeyword(object):
     COUNT = "count"
     DATA = "data"
     DESC = "description"
-    DOMAIN_URL = "domain_url"
+    PROVIDER_URL = "provider_url"
     ERROR_MSG = "error_message"
     FILES = "files"
     HEIGHT = "height"
@@ -69,14 +74,15 @@ class FileTypeValue(object):
 
 class MetadataFields(object):
     DESCRIPTION = "description"
+    LINK = "link"
+    META = "meta"
     NAME = "name"
     OG_DESC = "og:description"
     OG_IMAGE = "og:image"
     OG_TITLE = "og:title"
     PROPERTY = "property"
-    TITLE = "title"
-    LINK = "link"
     REL = "rel"
+    TITLE = "title"
 
 
 class ResponseType(object):
