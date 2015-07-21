@@ -9,6 +9,15 @@ from metadata import Metadata
 
 class ErrorMetadata(Metadata):
 
+    def init_fields(self):
+        self.prop_map[FieldKeyword.STATUS] = None
+        self.prop_map[FieldKeyword.URL] = None
+        self.prop_map[FieldKeyword.REQUEST_URL] = None
+        self.prop_map[FieldKeyword.PROVIDER_URL] = None
+        self.prop_map[FieldKeyword.ERROR_MSG] = None
+        self.prop_map[FieldKeyword.TITLE] = None
+        self.prop_map[FieldKeyword.DESC] = None
+
     def fetch_site_data(self, sanitized_url, status_code):
         response = None
         if status_code is not StatusCode.BAD_REQUEST:

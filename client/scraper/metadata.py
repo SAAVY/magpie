@@ -16,12 +16,25 @@ class Metadata:
 
     def __init__(self, url, response_code, sanitized_url):
         self.prop_map = collections.OrderedDict()
+        self.init_fields()
         self.prop_map[FieldKeyword.REQUEST_URL] = url
         response = self.fetch_site_data(sanitized_url, response_code)
         self.prop_map[FieldKeyword.STATUS] = response_code
         self.prop_map[FieldKeyword.URL] = response.sanitized_url
         self.prop_map[FieldKeyword.PROVIDER_URL] = response.provider_url
         self.parse_content(response)
+
+    def init_fields(self):
+        self.prop_map[FieldKeyword.STATUS] = None
+        self.prop_map[FieldKeyword.URL] = None
+        self.prop_map[FieldKeyword.REQUEST_URL] = None
+        self.prop_map[FieldKeyword.PROVIDER_URL] = None
+        self.prop_map[FieldKeyword.TITLE] = None
+        self.prop_map[FieldKeyword.DESC] = None
+        self.prop_map[FieldKeyword.FAVICON] = None
+        self.prop_map[FieldKeyword.IMAGES] = None
+        self.prop_map[FieldKeyword.MEDIA] = None
+        self.prop_map[FieldKeyword.FILES] = None
 
     def fetch_site_data(self, sanitized_url, status_code):
         """
