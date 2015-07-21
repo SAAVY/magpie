@@ -17,9 +17,9 @@ class Metadata:
     def __init__(self, url, response_code, sanitized_url):
         self.prop_map = collections.OrderedDict()
         self.prop_map[FieldKeyword.REQUEST_URL] = url
+        self.prop_map[FieldKeyword.URL] = sanitized_url
         response = self.fetch_site_data(sanitized_url, response_code)
         self.prop_map[FieldKeyword.STATUS] = response_code
-        self.prop_map[FieldKeyword.URL] = response.sanitized_url
         self.prop_map[FieldKeyword.PROVIDER_URL] = response.provider_url
         self.parse_content(response)
 
@@ -114,15 +114,14 @@ class Metadata:
             icon_link = icon_field['href'].encode('utf-8')
         return icon_link
 
-    def generic_fetch_content(self, sanitized_url, status_code):
+    def generic_fetch_content(self, request_url, status_code):
         response = Response()
 
-        request = requests.get(sanitized_url)
+        request = requests.get(request_url)
         redirect_url = request.url
-        sanitized_url = url_utils.remove_url_fragments(redirect_url)
 
-        provider_url = url_utils.get_domain_url(sanitized_url)
-        response.set_content(request.headers, request.content, request.status_code, sanitized_url, provider_url)
+        provider_url = url_utils.get_domain_url(redirect_url)
+        response.set_content(request.headers, request.content, request.status_code, redirect_url, provider_url)
         return response
 
     def generic_parse_content(self, response):

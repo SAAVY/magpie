@@ -29,7 +29,7 @@ class DropboxMetadata(Metadata):
         file_list[FieldKeyword.COUNT] = 1
         file_list[FieldKeyword.DATA] = [
             {
-                FieldKeyword.URL: self.get_download_url(response.sanitized_url),
+                FieldKeyword.URL: self.get_download_url(response.request_url),
                 FieldKeyword.TYPE: None
             }]
 

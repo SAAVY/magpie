@@ -49,7 +49,8 @@ def sanitize_url(url):
         url = 'http://' + url
         parsed_url = urlparse(url)
 
-    return parsed_url.geturl()
+    sanitized_url = remove_url_fragments(parsed_url.geturl())
+    return sanitized_url
 
 
 def remove_url_fragments(url):
