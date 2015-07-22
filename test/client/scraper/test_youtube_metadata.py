@@ -13,11 +13,10 @@ class TestYoutubeMetadata(unittest.TestCase):
             data = testFile.read()
 
         response = Response()
-        response.set_content("", data, "", test_url, UrlTypes.YOUTUBE)
+        response.set_content("", data, "", test_url, UrlTypes.get_special_url(UrlTypes.YOUTUBE))
 
         scraper = YoutubeMetadata(test_url, 200, test_url)
 
-        scraper.parse_content(response)
         scraped_response = scraper.prop_map
         self.assertTrue(scraped_response['media']['data'][0]['iframe'] is not None)
         self.assertTrue(scraped_response['media']['data'][0]['type'] is 'video')
