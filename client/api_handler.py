@@ -13,12 +13,13 @@ def get_metadata(url, response_type):
     sanitized_url = url_utils.sanitize_url(url)
     # check response status of website
     head = url_utils.get_requests_header(sanitized_url)
-
     code = url_utils.get_url_response_code(head)
+    if head is None:
+        metadata = create_metadata_object(url, code, None)
+    else:
+        sanitized_url = url_utils.get_redirect_url(head)
 
-    sanitized_url = url_utils.get_redirect_url(head)
-
-    metadata = create_metadata_object(url, code, sanitized_url)
+        metadata = create_metadata_object(url, code, sanitized_url)
 
     # return response based on response type
     if response_type == ResponseType.JSON:

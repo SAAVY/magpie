@@ -20,7 +20,7 @@ class ErrorMetadata(Metadata):
 
     def fetch_site_data(self, sanitized_url, status_code):
         response = None
-        if status_code is not StatusCode.BAD_REQUEST:
+        if status_code != StatusCode.BAD_REQUEST:
             response = self.generic_fetch_content(sanitized_url, status_code)
             status_code = response.status_code
         else:
@@ -33,13 +33,15 @@ class ErrorMetadata(Metadata):
         self.prop_map[FieldKeyword.STATUS] = response.status_code
         self.prop_map[FieldKeyword.ERROR_MSG] = response.error_msg
 
-        soup = BeautifulSoup(response.content)
-        title = self.get_title(soup)
-        desc = self.get_desc(soup)
-        favicon_url = self.get_favicon_url(soup)
+        if response.status_code != StatusCode.BAD_REQUEST:
 
-        self.prop_map[FieldKeyword.TITLE] = title
+            soup = BeautifulSoup(response.content)
+            title = self.get_title(soup)
+            desc = self.get_desc(soup)
+            favicon_url = self.get_favicon_url(soup)
 
-        self.prop_map[FieldKeyword.DESC] = desc
+            self.prop_map[FieldKeyword.TITLE] = title
 
-        self.prop_map[FieldKeyword.FAVICON] = favicon_url
+            self.prop_map[FieldKeyword.DESC] = desc
+
+            self.prop_map[FieldKeyword.FAVICON] = favicon_url
