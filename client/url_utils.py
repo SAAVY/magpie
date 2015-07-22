@@ -18,19 +18,22 @@ def get_requests_header(url):
 
 
 def get_redirect_url(head):
-    return head.url
+    if head is not None:
+        return head.url
+    return None
 
 
 def get_url_response_code(head):
     status_code = None
     if head is None:
         status_code = StatusCode.BAD_REQUEST
-    status_code = head.status_code
+    else:
+        status_code = head.status_code
     return status_code
 
 
 def get_error(status_code):
-    if status_code == StatusCode.BAD_REQUEST:
+    if status_code is None or status_code == StatusCode.BAD_REQUEST:
         return StatusCode.BAD_REQUEST, StatusCode.get_status_message(StatusCode.BAD_REQUEST)
     if status_code == StatusCode.UNAUTHORIZED:
         return StatusCode.UNAUTHORIZED, StatusCode.get_status_message(StatusCode.UNAUTHORIZED)
@@ -72,11 +75,13 @@ def get_domain_url(url):
 
 
 def get_url_type(url, status_code):
-    parsed_url = urlparse(url)
-    netloc_url = parsed_url.netloc
     error_code, error_msg = get_error(status_code)
     if error_code != StatusCode.OK:
         return UrlTypes.ERROR
+
+    parsed_url = urlparse(url)
+    netloc_url = parsed_url.netloc
+
     if UrlTypes.get_special_url(UrlTypes.DOCS) in netloc_url:
         return UrlTypes.DOCS
     if UrlTypes.get_special_url(UrlTypes.DROPBOX) in netloc_url:
