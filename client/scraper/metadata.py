@@ -26,9 +26,11 @@ class Metadata:
 
     def init_fields(self):
         self.prop_map[FieldKeyword.STATUS] = None
+        self.prop_map[FieldKeyword.ERROR_MSG] = None
         self.prop_map[FieldKeyword.URL] = None
         self.prop_map[FieldKeyword.REQUEST_URL] = None
         self.prop_map[FieldKeyword.PROVIDER_URL] = None
+        self.prop_map[FieldKeyword.API_QUERY_URL] = None
         self.prop_map[FieldKeyword.TITLE] = None
         self.prop_map[FieldKeyword.DESC] = None
         self.prop_map[FieldKeyword.FAVICON] = None
@@ -120,7 +122,7 @@ class Metadata:
 
     def get_favicon_url(self, soup):
         icon_link = None
-        icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon", "type": "image/x-icon"})
+        icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon", MetadataFields.TYPE: "image/x-icon"})
         if not icon_field:
             icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
         if icon_field:

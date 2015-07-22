@@ -43,22 +43,23 @@ class UrlTypes(object):
 
 
 class FieldKeyword(object):
+    API_QUERY_URL = "api_query_url"  # if an api was used, api_query_url is the request url used
     COUNT = "count"
     DATA = "data"
     DESC = "description"
-    PROVIDER_URL = "provider_url"
     ERROR_MSG = "error_message"
+    FAVICON = "favicon"
     FILES = "files"
     HEIGHT = "height"
     IFRAME = "iframe"
     IMAGES = "images"
     MEDIA = "media"
+    PROVIDER_URL = "provider_url"
+    REQUEST_URL = "request_url"
     STATUS = "status"
     TITLE = "title"
     TYPE = "type"
     URL = "url"
-    REQUEST_URL = "request_url"
-    FAVICON = "favicon"
     WIDTH = "width"
 
 
@@ -74,6 +75,7 @@ class FileTypeValue(object):
 
 class MetadataFields(object):
     DESCRIPTION = "description"
+    IFRAME = "iframe"
     LINK = "link"
     META = "meta"
     NAME = "name"
@@ -82,7 +84,9 @@ class MetadataFields(object):
     OG_TITLE = "og:title"
     PROPERTY = "property"
     REL = "rel"
+    SRC = "src"
     TITLE = "title"
+    TYPE = "type"
 
 
 class ResponseType(object):

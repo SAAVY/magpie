@@ -11,10 +11,10 @@ class ErrorMetadata(Metadata):
 
     def init_fields(self):
         self.prop_map[FieldKeyword.STATUS] = None
+        self.prop_map[FieldKeyword.ERROR_MSG] = None
         self.prop_map[FieldKeyword.URL] = None
         self.prop_map[FieldKeyword.REQUEST_URL] = None
         self.prop_map[FieldKeyword.PROVIDER_URL] = None
-        self.prop_map[FieldKeyword.ERROR_MSG] = None
         self.prop_map[FieldKeyword.TITLE] = None
         self.prop_map[FieldKeyword.DESC] = None
 
