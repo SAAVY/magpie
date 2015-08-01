@@ -7,8 +7,10 @@ from scraper import general_metadata
 from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 import url_utils
+from utils.profile import cprofile
 
 
+@cprofile
 def get_metadata(url, response_type):
     sanitized_url = url_utils.sanitize_url(url)
     # check response status of website
