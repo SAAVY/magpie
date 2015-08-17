@@ -127,6 +127,11 @@ class Metadata:
             icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
         if icon_field:
             icon_link = icon_field['href'].encode('utf-8')
+
+        provider_url = self.prop_map[FieldKeyword.PROVIDER_URL]
+        if icon_link:
+            icon_link = url_utils.validate_image_url(icon_link, provider_url)
+
         return icon_link
 
     def generic_fetch_content(self, request_url, status_code):

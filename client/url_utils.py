@@ -74,6 +74,19 @@ def get_domain_url(url):
     return provider_url
 
 
+def validate_image_url(image_url, provider_url):
+    parsed_image_uri = urlparse(image_url)
+
+    parsed_provider_uri = urlparse(provider_url)
+    if not parsed_image_uri.netloc:
+        path = parsed_image_uri.path
+        image_url = '{scheme}://{url}'.format(scheme=parsed_provider_uri.scheme, url=path)
+    parsed_image_uri = urlparse(image_url)
+    if not parsed_image_uri.netloc:
+        image_url = urlunparse((parsed_image_uri.scheme, parsed_provider_uri.netloc, parsed_image_uri.path, "", "", ""))
+    return image_url
+
+
 def get_url_type(url, status_code):
     error_code, error_msg = get_error(status_code)
     if error_code != StatusCode.OK:
