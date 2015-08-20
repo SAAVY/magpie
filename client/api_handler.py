@@ -1,3 +1,5 @@
+import config
+import cache_utils
 from constants import ResponseType
 from constants import UrlTypes
 from scraper import drive_metadata
@@ -20,7 +22,10 @@ def get_metadata(url, response_type):
         metadata = create_metadata_object(url, code, None)
     else:
         sanitized_url = url_utils.get_redirect_url(head)
-
+    if config.CACHE_DATA:
+        data = cache_utils.get_cached_data(sanitized_url)   # If data from db is None, continue and parse the website
+        if data is not None:
+            return data.metadata
         metadata = create_metadata_object(url, code, sanitized_url)
 
     # return response based on response type

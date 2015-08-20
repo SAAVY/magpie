@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from flask import Response as FlaskResponse
 import requests
 
+from client import cache_utils
+from client import config
 from client import url_utils
 from client.constants import FieldKeyword
 from client.constants import MetadataFields
@@ -73,6 +75,8 @@ class Metadata:
 
     def to_json(self):
         json_data = json.dumps(self.prop_map)
+        if config.CACHE_DATA:
+            cache_utils.cache_url(self.prop_map[FieldKeyword.URL], json_data)
         response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
         return response
 

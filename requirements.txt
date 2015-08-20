@@ -3,7 +3,6 @@ flake8
 flask==0.10.1
 lxml
 nose
-psycopg2
+redis
 requests
-sqlalchemy
 wikipedia
