@@ -1,6 +1,7 @@
 import config
 import cache_utils
 from constants import ResponseType
+from constants import StatusCode
 from constants import UrlTypes
 from scraper import drive_metadata
 from scraper import dropbox_metadata
@@ -10,6 +11,8 @@ from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 import url_utils
 from utils.profile import cprofile
+
+from flask import Response as FlaskResponse
 
 
 @cprofile
@@ -26,11 +29,15 @@ def get_metadata(url, response_type):
         data = cache_utils.get_cached_data(sanitized_url)   # If data from db is None, continue and parse the website
         if data is not None:
             return data.metadata
-        metadata = create_metadata_object(url, code, sanitized_url)
+    metadata = create_metadata_object(url, code, sanitized_url)
 
     # return response based on response type
     if response_type == ResponseType.JSON:
-        return get_json_metadata(metadata)
+        json_data = get_json_metadata(metadata)
+        if config.CACHE_DATA:
+            cache_utils.cache_json_data(sanitized_url, json_data)
+        response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
+        return response
 
 
 def get_json_metadata(metadata):

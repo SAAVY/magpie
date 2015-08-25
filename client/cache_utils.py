@@ -1,7 +1,7 @@
 from cache.connection import RedisInstance as Redis
 
 
-def cache_url(url, data):
+def cache_json_data(url, data):
     Redis.redis_instance.cache_url(url, data)
 
 
