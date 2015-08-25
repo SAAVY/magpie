@@ -49,7 +49,7 @@ class YoutubeMetadata(Metadata):
                     {
                         FieldKeyword.URL: embed_url,
                         FieldKeyword.TYPE: MediaTypeValue.VIDEO,
-                        FieldKeyword.IFRAME: data["html"]
+                        FieldKeyword.HTML: data["html"]
                     }]
                 images_list[FieldKeyword.COUNT] = len(images_list[FieldKeyword.DATA])
                 self.prop_map[FieldKeyword.IMAGES] = images_list
