@@ -56,20 +56,20 @@ class WikipediaMetadata(Metadata):
         keys = response.wiki_page.keys()
         page = response.wiki_page[keys[0]]
 
-        if page is not None and "extract" in page:
-            self.prop_map[FieldKeyword.DESC] = BeautifulSoup(page["extract"]).text
+        if page is not None and FieldKeyword.EXTRACT in page:
+            self.prop_map[FieldKeyword.DESC] = BeautifulSoup(page[FieldKeyword.EXTRACT]).text
 
-        if page is not None and "thumbnail" in page:
+        if page is not None and FieldKeyword.THUMBNAIL in page:
             images_list = {}
             images_list[FieldKeyword.COUNT] = 1
             image_data = []
             image_item = collections.OrderedDict()
-            if page["thumbnail"]["source"]:
-                image_item[FieldKeyword.URL] = page["thumbnail"]["source"]
-            if page["thumbnail"]["width"]:
-                image_item[FieldKeyword.WIDTH] = page["thumbnail"]["width"]
-            if page["thumbnail"]["width"]:
-                image_item[FieldKeyword.HEIGHT] = page["thumbnail"]["height"]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]:
+                image_item[FieldKeyword.URL] = page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]:
+                image_item[FieldKeyword.WIDTH] = page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]:
+                image_item[FieldKeyword.HEIGHT] = page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]
             image_data.append(image_item)
 
             images_list[FieldKeyword.DATA] = image_data
