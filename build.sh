@@ -21,7 +21,7 @@ if [ ! -z "$linter_output" ]; then
 	echo -e "${BOLD}${RED}FLAKE8 LINTER ERRORS:${NC}";
 	echo -e "${BOLD}${YELLOW}$linter_output${NC}"
 	exit 1;
-fi	
+fi
 echo -e "${BOLD}================== END LINTER ====================${NC}"
 echo
 
@@ -37,7 +37,7 @@ code=$?
 if [ "$code" != "0" ]; then
 	echo -e "${BOLD}${RED}NOT ALL UNIT TESTS PASSED!${NC}";
 	exit 1;
-fi	
+fi
 echo -e "${BOLD}================== END TESTS ====================${NC}"
 echo
 

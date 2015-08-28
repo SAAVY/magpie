@@ -2,13 +2,11 @@ import collections
 import json
 
 from bs4 import BeautifulSoup
-from flask import Response as FlaskResponse
 import requests
 
 from client import url_utils
 from client.constants import FieldKeyword
 from client.constants import MetadataFields
-from client.constants import StatusCode
 from client.response import Response
 
 
@@ -73,8 +71,7 @@ class Metadata:
 
     def to_json(self):
         json_data = json.dumps(self.prop_map)
-        response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
-        return response
+        return json_data
 
     def get_title(self, soup):
         title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})
