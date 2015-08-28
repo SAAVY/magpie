@@ -13,7 +13,22 @@ from metadata import Metadata
 
 class WikipediaMetadata(Metadata):
 
-    fetch_data_url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts%7Cimageinfo%7Cinfo%7Cpageimages&format=json&exchars=2000&iiprop=url&inprop=readable&piprop=thumbnail%7Cname&exintro=&titles="
+    def build_fetch_data_url(self, title):
+        base_api_url = "https://en.wikipedia.org/w/api.php?"
+        query = collections.OrderedDict([
+            ("action", "query"),
+            ("prop", "imageinfo%7Cinfo%7Cpageimages"),
+            ("format", "json"),
+            ("iiprop", "url"),
+            ("inprop", "readable"),
+            ("piprop", "thumbnail"),
+            ("pithumbsize", "500"),
+            ("exintro", ""),
+            ("titles", title)
+        ])
+        api_url = base_api_url
+        api_url += "&".join("%s=%s" % (key, val) for (key, val) in query.iteritems())
+        return api_url
 
     def fetch_site_data(self, sanitized_url, status_code):
         response = self.generic_fetch_content(sanitized_url, status_code)
@@ -24,7 +39,7 @@ class WikipediaMetadata(Metadata):
         if path is not None:
             title = path.group(1)
             try:
-                web_request = requests.get(self.fetch_data_url + title)
+                web_request = requests.get(self.build_fetch_data_url(title))
                 json_data = json.loads(web_request.content)
                 page = json_data["query"]["pages"]
 
@@ -47,10 +62,15 @@ class WikipediaMetadata(Metadata):
         if page is not None and "thumbnail" in page:
             images_list = {}
             images_list[FieldKeyword.COUNT] = 1
-            data = []
+            image_data = []
             image_item = collections.OrderedDict()
-            image_item[FieldKeyword.URL] = page["thumbnail"]["source"]
-            data.append(image_item)
+            if page["thumbnail"]["source"]:
+                image_item[FieldKeyword.URL] = page["thumbnail"]["source"]
+            if page["thumbnail"]["width"]:
+                image_item[FieldKeyword.WIDTH] = page["thumbnail"]["width"]
+            if page["thumbnail"]["width"]:
+                image_item[FieldKeyword.HEIGHT] = page["thumbnail"]["height"]
+            image_data.append(image_item)
 
-            images_list[FieldKeyword.DATA] = data
+            images_list[FieldKeyword.DATA] = image_data
             self.prop_map[FieldKeyword.IMAGES] = images_list
