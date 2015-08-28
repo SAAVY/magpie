@@ -1,11 +1,11 @@
 from bs4 import BeautifulSoup
+from urlparse import urlparse
+from wikipedia import DisambiguationError
+
 import collections
 import json
 import re
 import requests
-from urlparse import urlparse
-
-from wikipedia import DisambiguationError
 
 from client.constants import FieldKeyword
 from metadata import Metadata
