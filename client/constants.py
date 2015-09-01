@@ -21,25 +21,15 @@ class StatusCode(object):
 
 
 class UrlTypes(object):
-
-    DRIVE = "google drive"
-    DROPBOX = "dropbox"
+    GDRIVE = "drive.google.com"
+    DROPBOX = "dropbox.com"
     GENERAL = "general"
-    WIKI = "wikipedia"
-    YOUTUBE = "youtube"
-    DOCS = "google docs"
+    WIKI = "wikipedia.org"
+    YOUTUBE = "youtube.com"
+    GDOCS = "docs.google.com"
     ERROR = "error"
-
-    special_urls = {
-        DOCS: "docs.google.com",
-        DROPBOX: "dropbox.com",
-        WIKI: "wikipedia.org",
-        YOUTUBE: "youtube.com"
-    }
-
-    @staticmethod
-    def get_special_url(url_type):
-        return UrlTypes.special_urls.get(url_type)
+    DIRECT_IMAGE = "image/"
+    DIRECT_FILE = "application/"
 
 
 class FieldKeyword(object):
@@ -51,7 +41,7 @@ class FieldKeyword(object):
     FAVICON = "favicon"
     FILES = "files"
     HEIGHT = "height"
-    IFRAME = "iframe"
+    HTML = "html"
     IMAGES = "images"
     MEDIA = "media"
     PROVIDER_URL = "provider_url"
@@ -74,8 +64,8 @@ class FileTypeValue(object):
 
 
 class MetadataFields(object):
-    DESCRIPTION = "description"
     IFRAME = "iframe"
+    DESCRIPTION = "description"
     LINK = "link"
     META = "meta"
     NAME = "name"

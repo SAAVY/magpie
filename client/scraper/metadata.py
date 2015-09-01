@@ -1,7 +1,7 @@
+from bs4 import BeautifulSoup
+
 import collections
 import json
-
-from bs4 import BeautifulSoup
 import requests
 
 from client import url_utils
@@ -138,7 +138,7 @@ class Metadata:
         redirect_url = request.url
 
         provider_url = url_utils.get_domain_url(redirect_url)
-        response.set_content(request.headers, request.content, request.status_code, redirect_url, provider_url)
+        response.set_content(request.headers, request.content, request.status_code, redirect_url, request_url, provider_url)
         return response
 
     def generic_parse_content(self, response):

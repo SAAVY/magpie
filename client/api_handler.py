@@ -6,7 +6,9 @@ from constants import UrlTypes
 from scraper import drive_metadata
 from scraper import dropbox_metadata
 from scraper import error_metadata
+from scraper import file_metadata
 from scraper import general_metadata
+from scraper import image_metadata
 from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 import url_utils
@@ -18,18 +20,20 @@ from flask import Response as FlaskResponse
 @cprofile
 def get_metadata(url, response_type):
     sanitized_url = url_utils.sanitize_url(url)
-    # check response status of website
+
     head = url_utils.get_requests_header(sanitized_url)
-    code = url_utils.get_url_response_code(head)
     if head is None:
-        metadata = create_metadata_object(url, code, None)
+        metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None)
     else:
         sanitized_url = url_utils.get_redirect_url(head)
+
     if config.CACHE_DATA:
         data = cache_utils.get_cached_data(sanitized_url)   # If data from db is None, continue and parse the website
         if data is not None:
             return data.metadata
-    metadata = create_metadata_object(url, code, sanitized_url)
+    content_type = url_utils.get_content_type(head)
+
+    metadata = create_metadata_object(url, head.status_code, sanitized_url, content_type)
 
     # return response based on response type
     if response_type == ResponseType.JSON:
@@ -44,11 +48,11 @@ def get_json_metadata(metadata):
     return metadata.to_json()
 
 
-def create_metadata_object(url, response_code, sanitized_url):
-    url_type = url_utils.get_url_type(sanitized_url, response_code)
+def create_metadata_object(url, response_code, sanitized_url, content_type):
+    url_type = url_utils.get_url_type(sanitized_url, response_code, content_type)
     if url_type is UrlTypes.ERROR:
         return error_metadata.ErrorMetadata(url, response_code, sanitized_url)
-    if url_type is UrlTypes.DOCS:
+    if url_type is UrlTypes.GDOCS:
         return drive_metadata.DriveMetadata(url, response_code, sanitized_url)
     if url_type is UrlTypes.DROPBOX:
         return dropbox_metadata.DropboxMetadata(url, response_code, sanitized_url)
@@ -56,6 +60,10 @@ def create_metadata_object(url, response_code, sanitized_url):
         return wikipedia_metadata.WikipediaMetadata(url, response_code, sanitized_url)
     if url_type is UrlTypes.YOUTUBE:
         return youtube_metadata.YoutubeMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.DIRECT_IMAGE:
+        return image_metadata.ImageUrlMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.DIRECT_FILE:
+        return file_metadata.FileUrlMetadata(url, response_code, sanitized_url)
     if url_type is UrlTypes.GENERAL:
         return general_metadata.GeneralMetadata(url, response_code, sanitized_url)
     return None

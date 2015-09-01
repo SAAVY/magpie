@@ -23,13 +23,9 @@ def get_redirect_url(head):
     return None
 
 
-def get_url_response_code(head):
-    status_code = None
-    if head is None:
-        status_code = StatusCode.BAD_REQUEST
-    else:
-        status_code = head.status_code
-    return status_code
+def get_content_type(head):
+    content_type = head.headers['content-type']
+    return content_type
 
 
 def get_error(status_code):
@@ -87,20 +83,22 @@ def validate_image_url(image_url, provider_url):
     return image_url
 
 
-def get_url_type(url, status_code):
+def get_url_type(url, status_code, content_type):
     error_code, error_msg = get_error(status_code)
     if error_code != StatusCode.OK:
         return UrlTypes.ERROR
-
     parsed_url = urlparse(url)
     netloc_url = parsed_url.netloc
-
-    if UrlTypes.get_special_url(UrlTypes.DOCS) in netloc_url:
-        return UrlTypes.DOCS
-    if UrlTypes.get_special_url(UrlTypes.DROPBOX) in netloc_url:
+    if content_type.startswith(UrlTypes.DIRECT_IMAGE):
+        return UrlTypes.DIRECT_IMAGE
+    if content_type.startswith(UrlTypes.DIRECT_FILE):
+        return UrlTypes.DIRECT_FILE
+    if UrlTypes.GDOCS in netloc_url:
+        return UrlTypes.GDOCS
+    if UrlTypes.DROPBOX in netloc_url:
         return UrlTypes.DROPBOX
-    if UrlTypes.get_special_url(UrlTypes.WIKI) in netloc_url:
+    if UrlTypes.WIKI in netloc_url:
         return UrlTypes.WIKI
-    if UrlTypes.get_special_url(UrlTypes.YOUTUBE) in netloc_url:
+    if UrlTypes.YOUTUBE in netloc_url:
         return UrlTypes.YOUTUBE
     return UrlTypes.GENERAL

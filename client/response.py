@@ -11,10 +11,11 @@ class Response:
         self.url = None
         self.wiki_page = None
 
-    def set_content(self, header, content, code, request_url, provider_url):
+    def set_content(self, header, content, code, url, request_url, provider_url):
         self.content = content
         self.header = header
         self.status_code = code
+        self.url = url
         self.request_url = request_url
         self.provider_url = provider_url
 
