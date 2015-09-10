@@ -2,7 +2,9 @@ beautifulsoup4
 flake8
 flask==0.10.1
 lxml
+mock
 nose
 redis
 requests
+sqlalchemy
 wikipedia

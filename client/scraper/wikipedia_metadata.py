@@ -1,15 +1,34 @@
-import collections
-import re
+from bs4 import BeautifulSoup
 from urlparse import urlparse
-
-import wikipedia
 from wikipedia import DisambiguationError
+
+import collections
+import json
+import re
+import requests
 
 from client.constants import FieldKeyword
 from metadata import Metadata
 
 
 class WikipediaMetadata(Metadata):
+
+    def build_fetch_data_url(self, title):
+        base_api_url = "https://en.wikipedia.org/w/api.php?"
+        query = collections.OrderedDict([
+            ("action", "query"),
+            ("prop", "imageinfo%7Cinfo%7Cpageimages"),
+            ("format", "json"),
+            ("iiprop", "url"),
+            ("inprop", "readable"),
+            ("piprop", "thumbnail"),
+            ("pithumbsize", "500"),
+            ("exintro", ""),
+            ("titles", title)
+        ])
+        api_url = base_api_url
+        api_url += "&".join("%s=%s" % (key, val) for (key, val) in query.iteritems())
+        return api_url
 
     def fetch_site_data(self, sanitized_url, status_code):
         response = self.generic_fetch_content(sanitized_url, status_code)
@@ -20,7 +39,10 @@ class WikipediaMetadata(Metadata):
         if path is not None:
             title = path.group(1)
             try:
-                page = wikipedia.page(title)
+                web_request = requests.get(self.build_fetch_data_url(title))
+                json_data = json.loads(web_request.content)
+                page = json_data["query"]["pages"]
+
             except DisambiguationError as error:
                 # TODO: do something when there's a disambiguation error
                 error
@@ -31,20 +53,24 @@ class WikipediaMetadata(Metadata):
     def parse_content(self, response):
         self.generic_parse_content(response)
 
-        page = response.wiki_page
+        keys = response.wiki_page.keys()
+        page = response.wiki_page[keys[0]]
 
-        if page is not None and page.summary is not None:
-            self.prop_map[FieldKeyword.DESC] = page.summary
+        if page is not None and FieldKeyword.EXTRACT in page:
+            self.prop_map[FieldKeyword.DESC] = BeautifulSoup(page[FieldKeyword.EXTRACT]).text
 
-        if page is not None and page.images is not None:
+        if page is not None and FieldKeyword.THUMBNAIL in page:
             images_list = {}
-            img_count = 10 if len(page.images) > 9 else len(page.images)
-            images_list[FieldKeyword.COUNT] = img_count
-            data = []
-            for image in page.images[:img_count]:
-                image_item = collections.OrderedDict()
-                image_item[FieldKeyword.URL] = image
-                data.append(image_item)
+            images_list[FieldKeyword.COUNT] = 1
+            image_data = []
+            image_item = collections.OrderedDict()
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]:
+                image_item[FieldKeyword.URL] = page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]:
+                image_item[FieldKeyword.WIDTH] = page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]:
+                image_item[FieldKeyword.HEIGHT] = page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]
+            image_data.append(image_item)
 
-            images_list[FieldKeyword.DATA] = data
+            images_list[FieldKeyword.DATA] = image_data
             self.prop_map[FieldKeyword.IMAGES] = images_list
