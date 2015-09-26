@@ -15,7 +15,7 @@ class TestWikipediaMetadata(unittest.TestCase):
             data = testFile.read()
 
         response = Response()
-        response.set_content("", data, "", self.wikipedia_url, UrlTypes.get_special_url(UrlTypes.WIKI))
+        response.set_content("", data, "", self.wikipedia_url, self.wikipedia_url, UrlTypes.WIKI)
 
         content.return_value = response
 
