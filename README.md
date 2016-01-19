@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/SAAVY/magpie.svg?branch=master)](https://travis-ci.org/SAAVY/magpie)
+[![codecov.io](https://codecov.io/github/SAAVY/magpie/coverage.svg?branch=master)](https://codecov.io/github/SAAVY/magpie?branch=master)
 
 # Project Magpie
 
