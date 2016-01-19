@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+
 from client import url_utils
 from client.constants import FieldKeyword
 from client.constants import StatusCode
@@ -32,4 +34,14 @@ class ErrorMetadata(Metadata):
         self.prop_map[FieldKeyword.ERROR_MSG] = response.error_msg
 
         if response.status_code != StatusCode.BAD_REQUEST:
-            self.generic_parse_content(response)
+
+            soup = BeautifulSoup(response.content)
+            title = self.get_title(soup)
+            desc = self.get_desc(soup)
+            favicon_url = self.get_favicon_url(soup)
+
+            self.prop_map[FieldKeyword.TITLE] = title
+
+            self.prop_map[FieldKeyword.DESC] = desc
+
+            self.prop_map[FieldKeyword.FAVICON] = favicon_url
