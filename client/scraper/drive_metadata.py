@@ -6,6 +6,7 @@ from client.constants import FieldKeyword
 from client.constants import FileTypeValue
 from metadata import Metadata
 
+api_request_url = "https://www.googleapis.com/drive/v2/files/"
 docs_request_url = "https://docs.google.com/"
 export_presentation_path = "/export/pdf"
 export_path = "/export?format=pdf"
@@ -31,15 +32,15 @@ class DriveMetadata(Metadata):
 
         return export_url
 
-    def get_files_list(self, response):
-        file_list = collections.OrderedDict()
-        file_list[FieldKeyword.COUNT] = 1
-        file_list[FieldKeyword.DATA] = [{
-            FieldKeyword.URL: self.get_download_url(response.request_url),
-            FieldKeyword.TYPE: FileTypeValue.PDF
-        }]
-
-        return file_list
-
     def parse_content(self, response):
         self.generic_parse_content(response)
+
+        file_list = collections.OrderedDict()
+        file_list[FieldKeyword.COUNT] = 1
+        file_list[FieldKeyword.DATA] = [
+            {
+                FieldKeyword.URL: self.get_download_url(response.url),
+                FieldKeyword.TYPE: FileTypeValue.PDF
+            }]
+
+        self.prop_map[FieldKeyword.FILES] = file_list
