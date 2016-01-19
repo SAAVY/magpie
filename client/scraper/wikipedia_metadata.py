@@ -16,38 +16,44 @@ class WikipediaMetadata(Metadata):
         base_api_url = "https://en.wikipedia.org/w/api.php?"
         query = collections.OrderedDict([
             ("action", "query"),
-            ("prop", "imageinfo%7Cinfo%7Cpageimages"),
-            ("format", "json"),
+            ("prop", "extracts|imageinfo|pageimages|videoinfo"),
             ("iiprop", "url"),
-            ("inprop", "readable"),
-            ("piprop", "thumbnail"),
-            ("pithumbsize", "500"),
+            ("exlimit", "1"),
             ("exintro", ""),
+            ("explaintext", ""),
+            ("format", "json"),
+            ("piprop", "thumbnail%7Cname%7Coriginal"),
+            ("viprop", "canonicaltitle%7Curl"),
             ("titles", title)
         ])
         api_url = base_api_url
         api_url += "&".join("%s=%s" % (key, val) for (key, val) in query.iteritems())
+        print api_url
         return api_url
 
     def get_desc(self, response):
         page = response.wiki_page
-        if page is not None and page.summary is not None:
-            return page.summary
+        if page is not None and FieldKeyword.EXTRACT in page:
+            return page[FieldKeyword.EXTRACT]
         return None
 
     def get_images_list(self, response):
         page = response.wiki_page
-        if page is not None and page.images is not None:
+        if page is not None and FieldKeyword.THUMBNAIL in page and page[FieldKeyword.THUMBNAIL]:
             images_list = {}
-            img_count = 10 if len(page.images) > 9 else len(page.images)
-            images_list[FieldKeyword.COUNT] = img_count
-            data = []
-            for image in page.images[:img_count]:
-                image_item = collections.OrderedDict()
-                image_item[FieldKeyword.URL] = image
-                data.append(image_item)
+            images_list[FieldKeyword.COUNT] = 1
+            image_data = []
+            image_item = collections.OrderedDict()
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]:
+                image_item[FieldKeyword.URL] = page[FieldKeyword.THUMBNAIL][FieldKeyword.SOURCE]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]:
+                image_item[FieldKeyword.WIDTH] = page[FieldKeyword.THUMBNAIL][FieldKeyword.WIDTH]
+            if page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]:
+                image_item[FieldKeyword.HEIGHT] = page[FieldKeyword.THUMBNAIL][FieldKeyword.HEIGHT]
+            image_data.append(image_item)
+            print page[FieldKeyword.THUMBNAIL]
 
-            images_list[FieldKeyword.DATA] = data
+            images_list[FieldKeyword.DATA] = image_data
             return images_list
         return None
 
@@ -62,12 +68,13 @@ class WikipediaMetadata(Metadata):
             try:
                 web_request = requests.get(self.build_fetch_data_url(title))
                 json_data = json.loads(web_request.content)
-                page = json_data["query"]["pages"]
-
+                if "warnings" in json_data and json_data["warnings"]:
+                    print "WARNING: Error with wikipedia query: ", json_data["warnings"]['main']
+                for p in json_data["query"]["pages"]:
+                    page = json_data["query"]["pages"][p]
             except DisambiguationError as error:
                 print error
                 # TODO: do something when there's a disambiguation error
-                error
 
         response.set_wiki_content(page)
         return response

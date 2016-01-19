@@ -54,6 +54,7 @@ class FieldKeyword(object):
     TYPE = "type"
     URL = "url"
     WIDTH = "width"
+    IFRAME = "iframe"
 
 
 class MediaTypeValue(object):

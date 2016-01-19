@@ -148,14 +148,19 @@ class Metadata:
         return response
 
     def generic_parse_content(self, response):
-        self.prop_map[FieldKeyword.TITLE] = self.get_title(response)
+        try:
+            self.prop_map[FieldKeyword.TITLE] = self.get_title(response)
 
-        self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
+            self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
 
-        self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
+            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
-        self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
+            self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
 
-        self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
+            self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
 
-        self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
+            self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
+
+        except KeyError as e:
+            # TODO: log error
+            print e
