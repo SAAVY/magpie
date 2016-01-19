@@ -1,5 +1,6 @@
 .idea/
 venv/
 magpievenv/
+.coverage
 *.pyc
 *.DS_Store
