@@ -1,4 +1,6 @@
 beautifulsoup4
+coverage
+codecov
 flake8
 flask==0.10.1
 lxml

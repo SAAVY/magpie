@@ -7,5 +7,7 @@ install:
   - ./install.sh
 script:
   - ./build.sh
+after_success:
+  - codecov
 notifications:
   slack: fydpsaavy:haAycUdAeGxxztOPa095IpHl
