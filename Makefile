@@ -17,3 +17,6 @@ tests:
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} \;
+
+clean-logs:
+	rm -r logs/*

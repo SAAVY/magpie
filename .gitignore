@@ -2,5 +2,6 @@
 venv/
 magpievenv/
 .coverage
+logs/*
 *.pyc
 *.DS_Store

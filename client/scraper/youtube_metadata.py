@@ -1,6 +1,7 @@
 import json
 
 from bs4 import BeautifulSoup
+from flask import current_app
 
 from client.constants import FieldKeyword
 from client.constants import MediaTypeValue
@@ -27,11 +28,12 @@ class YoutubeMetadata(Metadata):
         return response
 
     def get_json_data(self, response):
+        logger = current_app.logger
         if response.api_content is not None:
             try:
                 return json.loads(response.api_content)
-            except Exception:
-                # TODO: log exception in reading json response
+            except Exception as e:
+                logger.exception("JSON EXCEPTION %s" % str(e))
                 pass
         return None
 
