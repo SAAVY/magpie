@@ -5,12 +5,14 @@ from datetime import date
 
 from flask import Flask
 from flask import request
+from flask.ext.cors import CORS
 
 import api_handler
 from cache.connection import RedisInstance as Redis
 import config
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
