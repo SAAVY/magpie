@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 
 import collections
-import json
 import requests
 
 from client import url_utils
@@ -14,6 +13,7 @@ class Metadata:
 
     def __init__(self, url, response_code, sanitized_url):
         self.prop_map = collections.OrderedDict()
+        self.cache_map = collections.OrderedDict()
         self.init_fields()
         self.prop_map[FieldKeyword.REQUEST_URL] = url
         self.prop_map[FieldKeyword.URL] = sanitized_url
@@ -69,9 +69,15 @@ class Metadata:
         """
         raise NotImplementedError("Every metadata scraper must implement parse_content")
 
-    def to_json(self):
-        json_data = json.dumps(self.prop_map)
-        return json_data
+    def get_cache_prop_map(self):
+        self.cache_map[FieldKeyword.URL] = self.prop_map[FieldKeyword.URL]
+        self.cache_map[FieldKeyword.TITLE] = self.prop_map[FieldKeyword.TITLE]
+        self.cache_map[FieldKeyword.DESC] = self.prop_map[FieldKeyword.DESC]
+        self.cache_map[FieldKeyword.FAVICON] = self.prop_map[FieldKeyword.FAVICON]
+        self.cache_map[FieldKeyword.IMAGES] = self.prop_map[FieldKeyword.IMAGES]
+        self.cache_map[FieldKeyword.MEDIA] = self.prop_map[FieldKeyword.MEDIA]
+        self.cache_map[FieldKeyword.FILES] = self.prop_map[FieldKeyword.FILES]
+        return self.cache_map
 
     def get_title(self, soup):
         title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})

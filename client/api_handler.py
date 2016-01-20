@@ -3,6 +3,7 @@ import cache_utils
 from constants import ResponseType
 from constants import StatusCode
 from constants import UrlTypes
+import format_utils
 from scraper import drive_metadata
 from scraper import dropbox_metadata
 from scraper import error_metadata
@@ -38,14 +39,20 @@ def get_metadata(url, response_type):
     # return response based on response type
     if response_type == ResponseType.JSON:
         json_data = get_json_metadata(metadata)
-        if config.CACHE_DATA:
-            cache_utils.cache_json_data(sanitized_url, json_data)
+        if config.CACHE_DATA and head.status_code is StatusCode.OK:
+            metadata.get_cache_prop_map()
+            cache_data = get_cache_json(metadata)
+            cache_utils.cache_json_data(sanitized_url, cache_data)
         response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
         return response
 
 
 def get_json_metadata(metadata):
-    return metadata.to_json()
+    return format_utils.to_json(metadata.prop_map)
+
+
+def get_cache_json(metadata):
+    return format_utils.to_json(metadata.cache_map)
 
 
 def create_metadata_object(url, response_code, sanitized_url, content_type):
