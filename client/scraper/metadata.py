@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 
 import collections
+from flask import current_app
 import requests
 
 from client import url_utils
@@ -79,7 +80,8 @@ class Metadata:
         self.cache_map[FieldKeyword.FILES] = self.prop_map[FieldKeyword.FILES]
         return self.cache_map
 
-    def get_title(self, soup):
+    def get_title(self, response):
+        soup = BeautifulSoup(response.content)
         title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})
         title = None
         if len(title_html) == 0:
@@ -93,7 +95,8 @@ class Metadata:
                 break
         return title
 
-    def get_desc(self, soup):
+    def get_desc(self, response):
+        soup = BeautifulSoup(response.content)
         desc_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_DESC})
         desc = None
         if len(desc_html) == 0:
@@ -106,7 +109,8 @@ class Metadata:
                 break
         return desc
 
-    def get_images_list(self, soup):
+    def get_images_list(self, response):
+        soup = BeautifulSoup(response.content)
         images_list = collections.OrderedDict()
         image_urls = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
         if len(image_urls) == 0:
@@ -123,21 +127,26 @@ class Metadata:
             return images_list
         return None
 
-    def get_favicon_url(self, soup):
+    def get_favicon_url(self, response):
+        soup = BeautifulSoup(response.content)
         icon_link = None
         icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon", MetadataFields.TYPE: "image/x-icon"})
         if not icon_field:
             icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
         if icon_field:
             icon_link = icon_field['href'].encode('utf-8')
-
-        provider_url = self.prop_map[FieldKeyword.PROVIDER_URL]
-        if icon_link:
-            icon_link = url_utils.validate_image_url(icon_link, provider_url)
-
+        icon_link = url_utils.validate_image_url(icon_link, self.prop_map[FieldKeyword.PROVIDER_URL])
         return icon_link
 
+    def get_media_list(self, response):
+        return None
+
+    def get_files_list(self, response):
+        return None
+
     def generic_fetch_content(self, request_url, status_code):
+        logger = current_app.logger
+        logger.debug("generic_fetch_content, request_url: %s status_code: %d" % (request_url, status_code))
         response = Response()
 
         request = requests.get(request_url)
@@ -148,20 +157,21 @@ class Metadata:
         return response
 
     def generic_parse_content(self, response):
-        soup = BeautifulSoup(response.content)
-        title = self.get_title(soup)
-        desc = self.get_desc(soup)
-        images_list = self.get_images_list(soup)
-        favicon_url = self.get_favicon_url(soup)
+        logger = current_app.logger
+        try:
+            self.prop_map[FieldKeyword.TITLE] = self.get_title(response)
 
-        self.prop_map[FieldKeyword.TITLE] = title
+            self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
 
-        self.prop_map[FieldKeyword.DESC] = desc
+            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
-        self.prop_map[FieldKeyword.FAVICON] = favicon_url
+            self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
 
-        self.prop_map[FieldKeyword.IMAGES] = images_list
+            self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
 
-        self.prop_map[FieldKeyword.MEDIA] = None
+            self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
 
-        self.prop_map[FieldKeyword.FILES] = None
+        except KeyError as e:
+            logger.exception("generic_parse_content KeyError Exception: %s" % str(e))
+        except Exception as e:
+            logger.exception("generic_parse_content Exception: %s" % str(e))
