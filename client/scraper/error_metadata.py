@@ -27,7 +27,8 @@ class ErrorMetadata(Metadata):
         else:
             response = Response()
         status_code, error_msg = url_utils.get_error(status_code)
-        logger.warn("%s %d error: %s", error_msg, status_code, sanitized_url)
+        response.set_error(status_code, error_msg)
+        logger.warn("fetch_site_data, error_msg: %s, status_code: %d, sanitized_url: %s", error_msg, status_code, sanitized_url)
         return response
 
     def parse_content(self, response):

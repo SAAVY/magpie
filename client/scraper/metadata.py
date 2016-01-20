@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 
 import collections
+from flask import current_app
 import json
 import requests
 
@@ -138,6 +139,8 @@ class Metadata:
         return None
 
     def generic_fetch_content(self, request_url, status_code):
+        logger = current_app.logger
+        logger.debug("generic_fetch_content, request_url: %s status_code: %d" % (request_url, status_code))
         response = Response()
 
         request = requests.get(request_url)
@@ -148,6 +151,7 @@ class Metadata:
         return response
 
     def generic_parse_content(self, response):
+        logger = current_app.logger
         try:
             self.prop_map[FieldKeyword.TITLE] = self.get_title(response)
 
@@ -162,5 +166,6 @@ class Metadata:
             self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
 
         except KeyError as e:
-            # TODO: log error
-            print e
+            logger.exception("generic_parse_content KeyError Exception: %s" % str(e))
+        except Exception as e:
+            logger.exception("generic_parse_content Exception: %s" % str(e))

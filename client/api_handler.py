@@ -1,6 +1,11 @@
 import json
 import logging
 
+from flask import current_app
+from flask import Response as FlaskResponse
+
+import cache_utils
+import config
 from constants import ResponseType
 from constants import StatusCode
 from constants import UrlTypes
@@ -14,18 +19,13 @@ from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 import url_utils
 from utils.profile import cprofile
-from flask import current_app
-
-import config
-import cache_utils
-from flask import Response as FlaskResponse
 
 
 @cprofile
 def get_metadata(url, response_type=ResponseType.JSON):
     logger = current_app.logger
     logger.setLevel(logging.DEBUG)
-    logger.debug("FUNC: get_metadata, URL: %s" % url)
+    logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
     sanitized_url = url_utils.sanitize_url(url)
     logger.debug("Sanitized url: %s" % sanitized_url)
 
@@ -60,6 +60,9 @@ def get_json_metadata(metadata):
 
 
 def create_metadata_object(url, response_code, sanitized_url, content_type):
+    logger = current_app.logger
+    logger.debug("FUNC: create_metadata_object, URL: %s, response_code: %d, sanitized_url: %s, content_type: %s" %
+                 (url, response_code, sanitized_url, content_type))
     url_type = url_utils.get_url_type(sanitized_url, response_code, content_type)
     if url_type is UrlTypes.ERROR:
         return error_metadata.ErrorMetadata(url, response_code, sanitized_url)

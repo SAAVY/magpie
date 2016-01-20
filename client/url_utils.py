@@ -4,17 +4,18 @@ from urlparse import urlunparse
 
 from constants import StatusCode
 from constants import UrlTypes
+
+from flask import current_app
 import requests
 
 
 def get_requests_header(url):
+    logger = current_app.logger
     head = None
     try:
         head = requests.head(url, allow_redirects=True)
     except Exception as e:
-        # TODO: log bad requests exception
-        print "EXCEPTION:", e
-        pass
+        logger.exception("get_requests_header Exception: %s" % str(e))
     return head
 
 
