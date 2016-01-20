@@ -11,8 +11,9 @@ def get_requests_header(url):
     head = None
     try:
         head = requests.head(url, allow_redirects=True)
-    except Exception:
-        # bad requests exception
+    except Exception as e:
+        # TODO: log bad requests exception
+        print "EXCEPTION:", e
         pass
     return head
 
@@ -24,8 +25,10 @@ def get_redirect_url(head):
 
 
 def get_content_type(head):
-    content_type = head.headers['content-type']
-    return content_type
+    if head is not None:
+        content_type = head.headers['content-type']
+        return content_type
+    return None
 
 
 def get_error(status_code):

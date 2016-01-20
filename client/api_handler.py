@@ -23,18 +23,17 @@ def get_metadata(url, response_type):
 
     head = url_utils.get_requests_header(sanitized_url)
     if head is None:
-        metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None)
+        metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None, None)
     else:
         sanitized_url = url_utils.get_redirect_url(head)
+        content_type = url_utils.get_content_type(head)
+
+        metadata = create_metadata_object(url, head.status_code, sanitized_url, content_type)
 
     if config.CACHE_DATA:
         data = cache_utils.get_cached_data(sanitized_url)   # If data from db is None, continue and parse the website
         if data is not None:
             return data.metadata
-    content_type = url_utils.get_content_type(head)
-
-    metadata = create_metadata_object(url, head.status_code, sanitized_url, content_type)
-
     # return response based on response type
     if response_type == ResponseType.JSON:
         json_data = get_json_metadata(metadata)
