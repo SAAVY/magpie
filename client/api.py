@@ -18,6 +18,11 @@ def home_page():
     return ""
 
 
+@app.route('/healthcheck')
+def health_check():
+    return "Success!", 200
+
+
 @app.route('/website', methods=['GET'])
 def get_metadata():
     local_request = request
