@@ -9,7 +9,7 @@ NC='\033[0m' # No Color
 
 
 echo -e "${BOLD}================== CHECK VIRTUAL ENV ====================${NC}"
-python -c 'import sys; print hasattr(sys, "real_prefix")' && INVENV=1 || INVENV=0
+python -c 'import sys; print sys.real_prefix' 2>/dev/null && INVENV=1 || INVENV=0
 if [ $INVENV -eq 0 ]; then
 	echo -e "${RED}ERROR: Not in virtual env! Source env by doing . venv/bin/activate${NC}";
 	exit 1;
