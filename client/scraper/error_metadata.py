@@ -10,10 +10,10 @@ from metadata import Metadata
 class ErrorMetadata(Metadata):
 
     def init_fields(self):
-        self.prop_map[FieldKeyword.STATUS] = None
-        self.prop_map[FieldKeyword.ERROR_MSG] = None
+        self.data_map[FieldKeyword.STATUS] = None
+        self.data_map[FieldKeyword.ERROR_MSG] = None
         self.prop_map[FieldKeyword.URL] = None
-        self.prop_map[FieldKeyword.REQUEST_URL] = None
+        self.data_map[FieldKeyword.REQUEST_URL] = None
         self.prop_map[FieldKeyword.PROVIDER_URL] = None
         self.prop_map[FieldKeyword.TITLE] = None
         self.prop_map[FieldKeyword.DESC] = None
@@ -32,8 +32,8 @@ class ErrorMetadata(Metadata):
         return response
 
     def parse_content(self, response):
-        self.prop_map[FieldKeyword.STATUS] = response.status_code
-        self.prop_map[FieldKeyword.ERROR_MSG] = response.error_msg
+        self.data_map[FieldKeyword.STATUS] = response.status_code
+        self.data_map[FieldKeyword.ERROR_MSG] = response.error_msg
 
         if response.status_code != StatusCode.BAD_REQUEST:
             self.generic_parse_content(response)

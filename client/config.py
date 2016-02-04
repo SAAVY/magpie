@@ -5,4 +5,4 @@ IS_DEV = True
 PROFILE_METHODS = False
 
 # set to false if you want to disable accessing redis
-CACHE_DATA = False
+CACHE_DATA = True
