@@ -41,7 +41,6 @@ class FieldKeyword(object):
     EXTRACT = "extract"
     FAVICON = "favicon"
     FILES = "files"
-    HEADER = "header"
     HEIGHT = "height"
     HTML = "html"
     IMAGES = "images"

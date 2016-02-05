@@ -73,7 +73,7 @@ def get_stream_log_handler(console_level=logging.DEBUG):
 
 def init_logger():
     if config.IS_DEV:
-        app.logger.setLevel(logging.WARN)
+        app.logger.setLevel(logging.DEBUG)
     else:
         app.logger.setLevel(logging.INFO)
     app.logger.addHandler(get_file_log_handler())
