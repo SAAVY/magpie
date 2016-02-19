@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Welcome! Thanks for your interest in contributing to Project Magpie, we welcome all contributors! However, please read the following guidelines before submmiting a pull request.
+Welcome! Thank you for your interest in contributing to Project Magpie, we welcome all contributors! Please refer to the following guidelines before submmiting a pull request.
 
 ## <a name="question"></a> Questions?
 
