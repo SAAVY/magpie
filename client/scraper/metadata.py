@@ -2,9 +2,9 @@ from bs4 import BeautifulSoup
 
 import collections
 from flask import current_app
-import json
 import requests
 
+from client import config
 from client import url_utils
 from client.constants import FieldKeyword
 from client.constants import MetadataFields
@@ -13,21 +13,25 @@ from client.response import Response
 
 class Metadata:
 
-    def __init__(self, url, response_code, sanitized_url):
+    def __init__(self, request_url, response_code, sanitized_url):
+
         self.prop_map = collections.OrderedDict()
+        self.data_map = collections.OrderedDict()
         self.init_fields()
-        self.prop_map[FieldKeyword.REQUEST_URL] = url
+
+        self.data_map[FieldKeyword.REQUEST_URL] = request_url
+        self.data_map[FieldKeyword.STATUS] = response_code
+        self.data_map[FieldKeyword.DATA] = self.prop_map
+
         self.prop_map[FieldKeyword.URL] = sanitized_url
-        response = self.fetch_site_data(sanitized_url, response_code)
-        self.prop_map[FieldKeyword.STATUS] = response_code
-        self.prop_map[FieldKeyword.PROVIDER_URL] = response.provider_url
-        self.parse_content(response)
 
     def init_fields(self):
-        self.prop_map[FieldKeyword.STATUS] = None
-        self.prop_map[FieldKeyword.ERROR_MSG] = None
+        self.data_map[FieldKeyword.STATUS] = None
+        self.data_map[FieldKeyword.ERROR_MSG] = None
+        self.data_map[FieldKeyword.REQUEST_URL] = None
+        self.data_map[FieldKeyword.DATA] = None
+
         self.prop_map[FieldKeyword.URL] = None
-        self.prop_map[FieldKeyword.REQUEST_URL] = None
         self.prop_map[FieldKeyword.PROVIDER_URL] = None
         self.prop_map[FieldKeyword.API_QUERY_URL] = None
         self.prop_map[FieldKeyword.TITLE] = None
@@ -70,9 +74,8 @@ class Metadata:
         """
         raise NotImplementedError("Every metadata scraper must implement parse_content")
 
-    def to_json(self):
-        json_data = json.dumps(self.prop_map)
-        return json_data
+    def get_cache_prop_map(self):
+        return self.prop_map
 
     def get_title(self, response):
         soup = BeautifulSoup(response.content)
@@ -148,6 +151,12 @@ class Metadata:
 
         provider_url = url_utils.get_domain_url(redirect_url)
         response.set_content(request.headers, request.content, request.status_code, redirect_url, request_url, provider_url)
+        if not config.CACHE_DATA:
+            self.data_map[FieldKeyword.STATUS] = response.status_code
+            self.prop_map[FieldKeyword.PROVIDER_URL] = response.provider_url
+        else:
+            self.data_map[FieldKeyword.STATUS] = status_code
+            self.prop_map[FieldKeyword.PROVIDER_URL] = provider_url
         return response
 
     def generic_parse_content(self, response):
