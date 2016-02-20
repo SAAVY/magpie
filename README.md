@@ -4,7 +4,7 @@
 # Project Magpie
 
 Magpie is an API aimed at displaying embedded content without the developer having to parse the website. 
-Magpie allows the developer to have full customization over 
+Magpie allows the developer to have full customization over how they want to display the metadata, and also choose to cache any metadata via redis.
 
 This is currently an ongoing project and is still at it's early stages of development.
 Please subscribe to updates about this project at http://projectmagpie.github.io
