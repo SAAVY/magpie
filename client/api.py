@@ -28,7 +28,7 @@ def health_check():
 @app.route('/website', methods=['GET'])
 def get_metadata():
     local_request = request
-    url = request.args.get('src')
+    url = request.args.get('src').strip()
     response_type = local_request.args.get('format')
     logger = app.logger
     try:

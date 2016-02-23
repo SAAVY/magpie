@@ -106,18 +106,24 @@ class Metadata:
                 break
         return desc
 
-    def get_images_list(self, response):
+    def get_images_list(self, response, provider_url):
         soup = BeautifulSoup(response.content)
         images_list = collections.OrderedDict()
         image_urls = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
+        image_attr = 'content'
+        prepend_url = ''
         if len(image_urls) == 0:
-            return None
+            image_urls = soup.findAll('img')
+            image_attr = 'src'
+            prepend_url = provider_url
+            if len(image_urls) == 0:
+                return None
         images_list[FieldKeyword.COUNT] = 0
         images_list[FieldKeyword.DATA] = []
         for i in range(len(image_urls)):
             image_item_dict = collections.OrderedDict()
-            if image_urls[i].has_attr('content'):
-                image_item_dict[FieldKeyword.URL] = image_urls[i]['content'].encode('utf-8')
+            if image_urls[i].has_attr(image_attr):
+                image_item_dict[FieldKeyword.URL] = (prepend_url + image_urls[i][image_attr]).encode('utf-8')
                 images_list[FieldKeyword.DATA].append(image_item_dict)
                 images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
         if images_list[FieldKeyword.COUNT] > 0:
@@ -166,13 +172,13 @@ class Metadata:
 
             self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
 
-            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
-
-            self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
+            self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response, self.prop_map[FieldKeyword.PROVIDER_URL])
 
             self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
 
             self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
+
+            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
         except KeyError as e:
             logger.exception("generic_parse_content KeyError Exception: %s" % str(e))
