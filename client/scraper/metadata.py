@@ -166,9 +166,9 @@ class Metadata:
 
             self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
 
-            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
-
             self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
+
+            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
             self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
 
