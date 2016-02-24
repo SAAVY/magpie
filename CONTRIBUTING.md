@@ -1,10 +1,10 @@
 # Contribution Guidelines
 
-Welcome! Thanks for your interest in contributing to Project Magpie, we welcome all contributors however please read the below these guidelines before submmiting a pull request.
+Welcome! Thank you for your interest in contributing to Project Magpie, we welcome all contributors! Please refer to the following guidelines before submmiting a pull request.
 
 ## <a name="question"></a> Questions?
 
-If you have questions regarding how to use Magpie API, please shoot an email to saavy2016@gmail.com.
+If you have questions regarding how to use the Magpie API, please shoot an email to saavy2016@gmail.com.
 
 ## <a name="issue"></a> Found an Issue/ Want a Feature?
 If you find a bug in the source code or a mistake in the documentation, you can help us by
@@ -15,7 +15,7 @@ You can also submit a Pull Request with a fix.
 ## <a name="submit"></a> Submission Guidelines
 
 ### Submitting an Issue
-Before you submit your issue or feature request search the archive, maybe your question was already answered.
+Before you submit your issue or feature request, search the archive, maybe your question was already answered.
 
 ### Submitting a Pull Request
 We ask that all pull requests made must have an issue # in the description of the pull request.
