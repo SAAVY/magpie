@@ -128,11 +128,12 @@ class Metadata:
         soup = BeautifulSoup(response.content)
         icon_link = None
         icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon", MetadataFields.TYPE: "image/x-icon"})
-        if not icon_field:
-            icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
         if icon_field:
             icon_link = icon_field['href'].encode('utf-8')
-        icon_link = url_utils.validate_image_url(icon_link, self.prop_map[FieldKeyword.PROVIDER_URL])
+        else:
+            icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
+        if icon_link:
+            icon_link = url_utils.validate_image_url(icon_link, self.prop_map[FieldKeyword.PROVIDER_URL])
         return icon_link
 
     def get_media_list(self, response):
