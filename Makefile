@@ -17,14 +17,6 @@ prod:
 tests:
 	PYTHONPATH=. nosetests test
 
-deploy_setup:
-	. ./config/deploy_config.sh
-	fab prod setup
-
-deploy:
-	. ./config/deploy_config.sh
-	fab prod pack deploy
-
 clean:
 	find client -name "*.pyc" -exec rm -rf {} \;
 
