@@ -36,6 +36,83 @@ Magpie is now installed on your computer! Note that Magpie runs on Flask.
 To run the application locally, simply run `make build dev` from the root of the project directory. Magpie will then launch on port 5000
 on your localhost.
 
+#<a name="setup"></a>Deployment
+To support multiple configuration servers, Magpie recommends using either gunicorn or wsig.
+
+## <a name="nginx_setup"></a>Nginx Setup
+If you are running an nginx webserver, Magpie recommends using [gunicorn](http://gunicorn.org/) to serve the flask server.
+
+Steps to installing gunicorn:
+
+install and start nginx:
+
+``` sudo apt-get install nginx ```
+
+``` sudo /etc/init.d/nginx start ```
+
+``` sudo git clone https://github.com/SAAVY/magpie.git /var/www/magpie```
+
+``` cd /var/www/magpie```
+
+rename (`deploy/nginx/magpie_api.ex_nginx.conf`)[deploy/nginx/magpie_api.ex_nginx.conf] to `deploy/apache/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
+
+edit the configuration values in the configuration file.
+
+``` cp deploy/nginx/magpie_api.conf /etc/nginx/sites-available/magpie_api.conf```
+
+move config to sites enabled to enable conf
+
+``` sudo cp /etc/nginx/sites-available/magpie_api.conf /etc/nginx/sites-enabled/magpie_api.conf```
+
+``` sudo virtualenv -p /usr/bin/python2.7 venv```
+
+## <a name="nginx_setup"></a>Running server using Gunicorn
+``` sudo . venv/bin/activate ```
+
+command to run server using gunicorn:
+
+It is recommended to set the number of threads to be `2*<<number of cores on the server>> -1`
+
+Log directory should be where you would like to place the flask log files in
+
+``` sudo gunicorn -w <<# of threads>> -b 127.0.0.1:8000 'client.api:start("<<log directory>>",False)'```
+
+Your server should now be accessible!
+
+
+## <a name="apache_setup"></a>Recommended Apache Setup
+If you are running an apache webserver, Magpie recommends using [mod_wsig](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/) to serve the flask server.
+
+Steps to installing apache-wsgi & running wsig application:
+``` apt-get install libapache2-mod-wsgi ```
+
+enable wsgi on apache
+``` a2enmod wsgi ```
+
+``` git clone https://github.com/SAAVY/magpie.git /var/www/magpie ```
+
+``` cd /var/www/magpie```
+
+``` virtualenv -p /usr/bin/python2.7 venv ```
+
+rename (`deploy/apache/magpie_api.ex_apache.conf`)[deploy/apache/magpie_api.ex_apache.conf] to `deploy/apache/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
+
+``` sudo cp deploy/apache/magpie_api.conf /etc/apache2/sites-available/magpie_api.conf ```
+
+Enable configuration file:
+
+``` sudo a2ensite magpie_api.conf ```
+
+``` sudo service apache2 reload ```
+
+
+copy the wsgi file to root directory, edit secret key in file
+``` sudo cp /var/www/magpie/deploy/apache/magpie.wsgi /var/www/magpie/magpie.wsgi ```
+
+``` sudo service apache2 reload ```
+
+Your server should be accessible!
+
 #<a name="params"></a>Request and Response parameters
 
 ## <a name="request"></a>Request Parameters
