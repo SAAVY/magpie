@@ -26,7 +26,7 @@ echo -e "${BOLD}================== END LINTER ====================${NC}"
 echo
 
 echo -e "${BOLD}================== COMPILING FILES ====================${NC}"
-find . -name \*.pyc -delete
+find client -name \*.pyc -delete
 python -m py_compile client/api.py
 echo -e "${BOLD}================== END COMPILE ====================${NC}"
 echo

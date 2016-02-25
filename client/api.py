@@ -1,18 +1,15 @@
+from datetime import date
 import logging
 import sys
 
-from datetime import date
-
 from flask import Flask
 from flask import request
-from flask.ext.cors import CORS
 
 import api_handler
 from cache.connection import RedisInstance as Redis
 import config
 
 app = Flask(__name__)
-CORS(app)
 
 
 @app.route('/')
@@ -40,14 +37,14 @@ def get_metadata():
     return "Something went wrong", 400
 
 
-def get_file_log_handler():
+def get_file_log_handler(log_directory):
     today = date.today()
     timestamp = "%d-%d-%d" % (today.year, today.month, today.day)
     file_level = logging.DEBUG
     if config.IS_DEV:
-        fh = logging.FileHandler("logs/%s.debug.magpie.log" % timestamp)
+        fh = logging.FileHandler("%s/%s.debug.magpie.log" % (log_directory, timestamp))
     else:
-        fh = logging.FileHandler("logs/%s.magpie.log" % timestamp)
+        fh = logging.FileHandler("%s/%s.magpie.log" % (log_directory, timestamp))
         file_level = logging.INFO
     fh.setLevel(file_level)
     fh_format = logging.Formatter('%(asctime)s - %(name)s:%(lineno)d - %(levelname)-8s - %(message)s')
@@ -55,36 +52,55 @@ def get_file_log_handler():
     return fh
 
 
-def get_file_warn_log_handler():
+def get_file_warn_log_handler(log_directory):
     today = date.today()
     timestamp = "%d-%d-%d" % (today.year, today.month, today.day)
-    fh_warn = logging.FileHandler(filename="logs/%s.errors.magpie.log" % timestamp)
+    fh_warn = logging.FileHandler(filename="%s/%s.errors.magpie.log" % (log_directory, timestamp))
     fh_warn.setLevel(logging.WARNING)
     fh_format = logging.Formatter('%(asctime)s - %(name)s:%(lineno)d - %(levelname)-8s - %(message)s')
     fh_warn.setFormatter(fh_format)
     return fh_warn
 
 
-def get_stream_log_handler(console_level=logging.DEBUG):
-    ch = logging.StreamHandler()  # StreamHandler logs to console
-    ch.setLevel(console_level)
-    ch_format = logging.Formatter('%(name)s:%(lineno)d - %(message)s')
-    ch.setFormatter(ch_format)
-    return ch
-
-
-def init_logger():
+def init_logger(log_directory):
     if config.IS_DEV:
         app.logger.setLevel(logging.DEBUG)
     else:
         app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(get_file_log_handler())
-    app.logger.addHandler(get_file_warn_log_handler())
+    app.logger.addHandler(get_file_log_handler(log_directory))
+    app.logger.addHandler(get_file_warn_log_handler(log_directory))
+
+
+def start(log_dir="logs", cache=False):
+    """
+        Start app with gunicorn
+
+        Params:
+        log_directory -- the directory where logs are, default log directory is logs
+        cache -- whether to cache data to redis instance, default to False
+
+        start gunicorn server with command:
+            gunicorn -b 127.0.0.1:8000 'client.api:start("logs",False)'
+    """
+    if cache:
+        Redis.init_redis_instance()
+    init_logger(log_dir)
+    logger = app.logger
+    logger.info('Starting Server')
+    return app
+
 
 if __name__ == '__main__':
+    """
+        init app only for running a development server
+
+        start development server with command:
+            python client/api.py
+    """
     if config.CACHE_DATA:
         Redis.init_redis_instance()
-    init_logger()
+    default_log_dir = "logs"
+    init_logger(default_log_dir)
     logger = app.logger
     logger.info('Starting Server')
     app.run(debug=config.IS_DEV)
