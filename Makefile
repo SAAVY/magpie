@@ -1,3 +1,5 @@
+.PHONY: clean build dev tests deploy
+
 default:
 
 install:
@@ -10,13 +12,13 @@ dev:
 	PYTHONPATH=. python client/api.py
 
 prod:
-	PYTHONPATH=. python client/api.py
+	PYTHONPATH=. gunicorn -w 4 -b 127.0.0.1:8000 'client.api:start("logs",False)'
 
 tests:
 	PYTHONPATH=. nosetests test
 
 clean:
-	find . -name "*.pyc" -exec rm -rf {} \;
+	find client -name "*.pyc" -exec rm -rf {} \;
 
 clean-logs:
 	rm -r logs/*
