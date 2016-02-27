@@ -40,6 +40,7 @@ class Metadata:
         self.prop_map[FieldKeyword.IMAGES] = None
         self.prop_map[FieldKeyword.MEDIA] = None
         self.prop_map[FieldKeyword.FILES] = None
+        self.prop_map[FieldKeyword.SELECTORS] = None
 
     def fetch_site_data(self, sanitized_url, status_code):
         """
@@ -166,6 +167,27 @@ class Metadata:
             self.prop_map[FieldKeyword.PROVIDER_URL] = provider_url
         return response
 
+    def get_selector_list(self, response):
+        tags_list = collections.OrderedDict()
+        tags_list[FieldKeyword.COUNT] = 0
+        tags_list[FieldKeyword.DATA] = []
+        soup = BeautifulSoup(response.content)
+        if(self.tag_name == None):
+            return None
+        else:
+            if self.tag_class != None and self.tag_id!=None:
+                my_tags = soup.findAll(self.tag_name, { "class" : self.tag_class , "id" : self.tag_id })
+            elif self.tag_class != None:
+                my_tags = soup.findAll(self.tag_name, { "class" : self.tag_class })
+            elif self.tag_id != None:
+                my_tags = soup.findAll(self.tag_name, { "id" : self.tag_id })
+            else:
+                my_tags = soup.findAll(self.tag_name)
+            for tag in my_tags:
+                tags_list[FieldKeyword.DATA].append(tag.text)
+                tags_list[FieldKeyword.COUNT] += 1
+        return tags_list
+
     def generic_parse_content(self, response):
         logger = current_app.logger
         try:
@@ -181,7 +203,7 @@ class Metadata:
 
             self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
 
-            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
+            self.prop_map[FieldKeyword.SELECTORS] = self.get_selector_list(response)
 
         except KeyError as e:
             logger.exception("generic_parse_content KeyError Exception: %s" % str(e))
