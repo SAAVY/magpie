@@ -172,15 +172,15 @@ class Metadata:
         tags_list[FieldKeyword.COUNT] = 0
         tags_list[FieldKeyword.DATA] = []
         soup = BeautifulSoup(response.content)
-        if(self.tag_name == None):
+        if(self.tag_name is None):
             return None
         else:
-            if self.tag_class != None and self.tag_id!=None:
-                my_tags = soup.findAll(self.tag_name, { "class" : self.tag_class , "id" : self.tag_id })
-            elif self.tag_class != None:
-                my_tags = soup.findAll(self.tag_name, { "class" : self.tag_class })
-            elif self.tag_id != None:
-                my_tags = soup.findAll(self.tag_name, { "id" : self.tag_id })
+            if self.tag_class is not None and self.tag_id is not None:
+                my_tags = soup.findAll(self.tag_name, {"class": self.tag_class, "id": self.tag_id})
+            elif self.tag_class is not None:
+                my_tags = soup.findAll(self.tag_name, {"class": self.tag_class})
+            elif self.tag_id is not None:
+                my_tags = soup.findAll(self.tag_name, {"id": self.tag_id})
             else:
                 my_tags = soup.findAll(self.tag_name)
             for tag in my_tags:
