@@ -30,11 +30,14 @@ def get_metadata():
     local_request = request
     url = request.args.get('src')
     response_type = local_request.args.get('format')
+    tag_name = local_request.args.get('tag')
+    tag_id = local_request.args.get('id')
+    tag_class = local_request.args.get('class')
     logger = app.logger
     try:
         if response_type:
-            return api_handler.get_metadata(url, response_type)
-        return api_handler.get_metadata(url)
+            return api_handler.get_metadata(url, tag_id, tag_class, tag_name, response_type)
+        return api_handler.get_metadata(url, tag_id, tag_class, tag_name)
     except Exception:
         logger.exception("Unexpected error: %s", sys.exc_info()[0])
     return "Something went wrong", 400

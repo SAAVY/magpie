@@ -24,7 +24,7 @@ from utils.profile import cprofile
 
 
 @cprofile
-def get_metadata(url, response_type=ResponseType.JSON):
+def get_metadata(url, tag_id, tag_class, tag_name, response_type=ResponseType.JSON):
     logger = current_app.logger
     logger.setLevel(logging.DEBUG)
     logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
@@ -57,7 +57,10 @@ def get_metadata(url, response_type=ResponseType.JSON):
             metadata.data_map[FieldKeyword.DATA] = data_map
             return get_json_metadata(metadata.data_map)
 
-    metadata.parse_content(site_response)
+    if(url_utils.get_url_type(sanitized_url, response_code, content_type) == UrlTypes.GENERAL):
+        metadata.parse_content(site_response, tag_id, tag_class, tag_name)
+    else:
+        metadata.parse_content(site_response)
     json_data = get_json_metadata(metadata.data_map)
     logger.info(json_data)
     if config.CACHE_DATA and site_response.status_code == StatusCode.OK:
