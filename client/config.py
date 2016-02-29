@@ -6,3 +6,5 @@ PROFILE_METHODS = False
 
 # set to false if you want to disable accessing redis
 CACHE_DATA = False
+
+MAX_DESC_LENGTH = 200
