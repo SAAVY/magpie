@@ -7,6 +7,7 @@ import requests
 from client import config
 from client import url_utils
 from client.constants import FieldKeyword
+from client.constants import ImageAttrs
 from client.constants import MetadataFields
 from client.response import Response
 
@@ -38,6 +39,7 @@ class Metadata:
         self.prop_map[FieldKeyword.DESC] = None
         self.prop_map[FieldKeyword.FAVICON] = None
         self.prop_map[FieldKeyword.IMAGES] = None
+        self.prop_map[FieldKeyword.THUMBNAIL] = None
         self.prop_map[FieldKeyword.MEDIA] = None
         self.prop_map[FieldKeyword.FILES] = None
 
@@ -106,26 +108,43 @@ class Metadata:
                 break
         return desc
 
+    def get_thumbnail(self, response):
+        if self.prop_map[FieldKeyword.IMAGES][FieldKeyword.COUNT] == 0:
+            return None
+        return self.prop_map[FieldKeyword.IMAGES][FieldKeyword.DATA][0]
+
+    def _get_prepend_url(self, image_url):
+        if image_url.startswith('http') or image_url.startswith('www'):
+            return ''
+        return self.prop_map[FieldKeyword.PROVIDER_URL]
+
     def get_images_list(self, response):
         soup = BeautifulSoup(response.content)
         images_list = collections.OrderedDict()
+        images_list[FieldKeyword.COUNT] = 0
+        images_list[FieldKeyword.DATA] = []
+
         image_urls = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
         image_attr = 'content'
-        prepend_url = ''
         if len(image_urls) == 0:
             image_urls = soup.findAll('img')
             image_attr = 'src'
-            prepend_url = self.prop_map[FieldKeyword.PROVIDER_URL]
             if len(image_urls) == 0:
                 return None
-        images_list[FieldKeyword.COUNT] = 0
-        images_list[FieldKeyword.DATA] = []
+
         for i in range(len(image_urls)):
             image_item_dict = collections.OrderedDict()
             if image_urls[i].has_attr(image_attr):
-                image_item_dict[FieldKeyword.URL] = (prepend_url + image_urls[i][image_attr]).encode('utf-8')
-                images_list[FieldKeyword.DATA].append(image_item_dict)
-                images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
+                image_url = image_urls[i][image_attr]
+                prepend_url = self._get_prepend_url(image_url)
+                if not (image_urls[i].has_attr('height') and int(image_urls[i]['height']) < ImageAttrs.IMAGE_HEIGHT):
+                    if image_url is "":
+                        continue
+                    image_item_dict[FieldKeyword.URL] = (prepend_url + image_url).encode('utf-8')
+                    images_list[FieldKeyword.DATA].append(image_item_dict)
+                    images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
+                    if images_list[FieldKeyword.COUNT] >= ImageAttrs.IMAGES_NUMBER:
+                        break
         if images_list[FieldKeyword.COUNT] > 0:
             return images_list
         return None
@@ -174,6 +193,8 @@ class Metadata:
             self.prop_map[FieldKeyword.DESC] = self.get_desc(response)
 
             self.prop_map[FieldKeyword.IMAGES] = self.get_images_list(response)
+
+            self.prop_map[FieldKeyword.THUMBNAIL] = self.get_thumbnail(response)
 
             self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
