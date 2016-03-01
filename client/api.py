@@ -41,7 +41,10 @@ def get_metadata():
     logger = app.logger
 
     try:
-        return api_handler.get_metadata(query_params)
+        if len(urls) == 1:
+            return api_handler.get_url_metadata(query_params)
+        else:
+            return api_handler.get_urls_metadata(query_params)
     except Exception:
         logger.exception("Unexpected error: %s", sys.exc_info()[0])
     return "Something went wrong", 400
