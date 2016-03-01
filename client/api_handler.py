@@ -6,7 +6,6 @@ from flask import Response as FlaskResponse
 import cache_utils
 import config
 from constants import FieldKeyword
-from constants import ResponseType
 from constants import StatusCode
 from constants import UrlTypes
 import format_utils
@@ -24,7 +23,11 @@ from utils.profile import cprofile
 
 
 @cprofile
-def get_metadata(url, response_type=ResponseType.JSON):
+def get_metadata(query_params):
+    url = query_params.query_url
+    desc_length = query_params.desc_length
+    response_type = query_params.response_type
+
     logger = current_app.logger
     logger.setLevel(logging.DEBUG)
     logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
@@ -58,6 +61,10 @@ def get_metadata(url, response_type=ResponseType.JSON):
             return get_json_metadata(metadata.data_map)
 
     metadata.parse_content(site_response)
+
+    # Trim the description if necessary
+    trim_description(metadata, desc_length)
+
     json_data = get_json_metadata(metadata.data_map)
     logger.info(json_data)
     if config.CACHE_DATA and site_response.status_code == StatusCode.OK:
@@ -67,6 +74,13 @@ def get_metadata(url, response_type=ResponseType.JSON):
         cache_utils.cache_json_data(sanitized_url, cache_data)
     response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
     return response
+
+
+def trim_description(metadata, desc_length):
+    if metadata.prop_map['description'] is not None:
+        desc = metadata.prop_map['description']
+        desc = (desc[:desc_length] + '...') if len(desc) > desc_length else desc
+        metadata.prop_map['description'] = desc
 
 
 def get_json_metadata(map):

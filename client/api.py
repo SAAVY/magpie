@@ -8,6 +8,7 @@ from flask import request
 import api_handler
 from cache.connection import RedisInstance as Redis
 import config
+from query_utils import QueryParams
 
 app = Flask(__name__)
 
@@ -24,14 +25,23 @@ def health_check():
 
 @app.route('/website', methods=['GET'])
 def get_metadata():
+    query_params = QueryParams()
     local_request = request
+
     url = request.args.get('src').strip()
     response_type = local_request.args.get('format')
+    desc_length = local_request.args.get('desc_cap')
+
+    query_params.query_url = url
+    if desc_length is not None:
+        query_params.desc_length = int(desc_length)
+    if response_type is not None:
+        query_params.response_type = response_type
+
     logger = app.logger
+
     try:
-        if response_type:
-            return api_handler.get_metadata(url, response_type)
-        return api_handler.get_metadata(url)
+        return api_handler.get_metadata(query_params)
     except Exception:
         logger.exception("Unexpected error: %s", sys.exc_info()[0])
     return "Something went wrong", 400

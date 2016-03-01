@@ -116,9 +116,13 @@ Your server should be accessible!
 #<a name="params"></a>Request and Response parameters
 
 ## <a name="request"></a>Request Parameters
-The only request parameter supported by Magpie currently is the ```src``` parameter. 
-This parameter takes in the url that needs to be scraped for Metadata. A local request to magpie would be as follows:  
-`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`
+There are currently two request parameters supported by Magpie
+| Field  | Description  |
+|---|---|
+| `src`  |The url that needs to be scraped for Metadata. A local request to magpie would be as follows: 
+`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`|
+| `desc_cap`  | Allows for customization over the length of the `description` field. Default cap is set to 200 characters.   |
+  
 
 ## <a name="examples"></a>Response Examples
 A sample of the various types of JSON responses are shown below.
