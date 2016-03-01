@@ -1,7 +1,7 @@
 class ImageAttrs(object):
-    IMAGE_HEIGHT = 50
-    IMAGE_WIDTH = 50
-    IMAGES_NUMBER = 10
+    MIN_IMAGE_HEIGHT = 50
+    MIN_IMAGE_WIDTH = 50
+    MAX_RETURN_IMAGES = 10
 
 
 class StatusCode(object):

@@ -124,26 +124,26 @@ class Metadata:
         images_list[FieldKeyword.COUNT] = 0
         images_list[FieldKeyword.DATA] = []
 
-        image_urls = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
+        images = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
         image_attr = 'content'
-        if len(image_urls) == 0:
-            image_urls = soup.findAll('img')
+        if len(images) == 0:
+            images = soup.findAll('img')
             image_attr = 'src'
-            if len(image_urls) == 0:
+            if len(images) == 0:
                 return None
 
-        for i in range(len(image_urls)):
+        for image in images:
             image_item_dict = collections.OrderedDict()
-            if image_urls[i].has_attr(image_attr):
-                image_url = image_urls[i][image_attr]
+            if image.has_attr(image_attr):
+                image_url = image[image_attr]
                 prepend_url = self._get_prepend_url(image_url)
-                if not (image_urls[i].has_attr('height') and int(image_urls[i]['height']) < ImageAttrs.IMAGE_HEIGHT):
+                if not (image.has_attr('height') and int(image['height']) < ImageAttrs.MIN_IMAGE_HEIGHT):
                     if image_url is "":
                         continue
                     image_item_dict[FieldKeyword.URL] = (prepend_url + image_url).encode('utf-8')
                     images_list[FieldKeyword.DATA].append(image_item_dict)
                     images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
-                    if images_list[FieldKeyword.COUNT] >= ImageAttrs.IMAGES_NUMBER:
+                    if images_list[FieldKeyword.COUNT] >= ImageAttrs.MAX_RETURN_IMAGES:
                         break
         if images_list[FieldKeyword.COUNT] > 0:
             return images_list
