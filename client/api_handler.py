@@ -1,10 +1,9 @@
-import logging
-
 from flask import current_app
 from flask import Response as FlaskResponse
 
 import cache_utils
 import config
+import collections
 from constants import FieldKeyword
 from constants import StatusCode
 from constants import UrlTypes
@@ -23,22 +22,45 @@ from utils.profile import cprofile
 
 
 @cprofile
-def get_metadata(query_params):
-    url = query_params.query_url
+def get_url_metadata(query_params):
+    desc_length = query_params.desc_length
+    response_type = query_params.response_type
+    url = query_params.query_urls[0].strip()
+
+    metadata = get_metadata(url, response_type, desc_length)
+    response = FlaskResponse(response=metadata, status=StatusCode.OK, mimetype="application/json")
+    return response
+
+
+@cprofile
+def get_urls_metadata(query_params):
+    urls = query_params.query_urls
     desc_length = query_params.desc_length
     response_type = query_params.response_type
 
+    json_output = collections.OrderedDict()
+    json_output['response_count'] = len(urls)
+    json_output['responses'] = []
+    for url in urls:
+        metadata = get_metadata(url.strip(), response_type, desc_length)
+        json_output['responses'].append(json.loads(metadata))
+
+    multiple_responses = get_json_metadata(json_output)
+    response = FlaskResponse(response=multiple_responses, status=StatusCode.OK, mimetype="application/json")
+    return response
+
+
+def get_metadata(url, response_type, desc_length):
+    metadata = None
+    content_type = None
+    response_code = None
     logger = current_app.logger
-    logger.setLevel(logging.DEBUG)
     logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
     sanitized_url = url_utils.sanitize_url(url)
     logger.debug("Sanitized url: %s" % sanitized_url)
 
-    metadata = None
-    content_type = None
-    response_code = None
-
     head = url_utils.get_requests_header(sanitized_url)
+
     if head is None:
         metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None, None)
         response_code = StatusCode.BAD_REQUEST
@@ -72,8 +94,8 @@ def get_metadata(query_params):
         cache_data = get_json_metadata(cache_map)
         logger.debug("Caching json data to redis db")
         cache_utils.cache_json_data(sanitized_url, cache_data)
-    response = FlaskResponse(response=json_data, status=StatusCode.OK, mimetype="application/json")
-    return response
+
+    return json_data
 
 
 def trim_description(metadata, desc_length):

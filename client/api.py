@@ -25,14 +25,14 @@ def health_check():
 
 @app.route('/website', methods=['GET'])
 def get_metadata():
+    urls = request.args.getlist('src')
     query_params = QueryParams()
     local_request = request
 
-    url = request.args.get('src').strip()
     response_type = local_request.args.get('format')
     desc_length = local_request.args.get('desc_cap')
 
-    query_params.query_url = url
+    query_params.query_urls = urls
     if desc_length is not None:
         query_params.desc_length = int(desc_length)
     if response_type is not None:
@@ -41,7 +41,10 @@ def get_metadata():
     logger = app.logger
 
     try:
-        return api_handler.get_metadata(query_params)
+        if len(urls) == 1:
+            return api_handler.get_url_metadata(query_params)
+        else:
+            return api_handler.get_urls_metadata(query_params)
     except Exception:
         logger.exception("Unexpected error: %s", sys.exc_info()[0])
     return "Something went wrong", 400
