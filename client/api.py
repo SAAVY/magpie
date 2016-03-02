@@ -32,7 +32,7 @@ def get_metadata():
     response_type = local_request.args.get('format')
     desc_length = local_request.args.get('desc_cap')
 
-    query_params.query_url = urls
+    query_params.query_urls = urls
     if desc_length is not None:
         query_params.desc_length = int(desc_length)
     if response_type is not None:

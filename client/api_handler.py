@@ -25,7 +25,7 @@ from utils.profile import cprofile
 def get_url_metadata(query_params):
     desc_length = query_params.desc_length
     response_type = query_params.response_type
-    url = query_params.query_url[0].strip()
+    url = query_params.query_urls[0].strip()
 
     metadata = get_metadata(url, response_type, desc_length)
     response = FlaskResponse(response=metadata, status=StatusCode.OK, mimetype="application/json")
@@ -34,7 +34,7 @@ def get_url_metadata(query_params):
 
 @cprofile
 def get_urls_metadata(query_params):
-    urls = query_params.query_url
+    urls = query_params.query_urls
     desc_length = query_params.desc_length
     response_type = query_params.response_type
 

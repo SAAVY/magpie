@@ -3,7 +3,7 @@
 
 # Project Magpie
 
-Magpie is an API aimed at displaying embedded content without the developer having to parse the website. 
+Magpie is an API aimed at displaying embedded content without the developer having to parse the website.
 Magpie allows the developer to have full customization over how they want to display the metadata, and also choose to cache any metadata via redis.
 
 This is currently an ongoing project and is still at it's early stages of development.
@@ -22,7 +22,7 @@ Magpie supports retrieving metadata from all websites that provide meta tags. Ma
 
 ### <a name="setup"></a>Installation
 Since Magpie is a Python based application, please make sure you have Python 2.7.x installed before proceeding further.  
-  
+
   1. Clone the repository  
         ``` git clone https://github.com/SAAVY/magpie.git ```  
   2. Make a Python virtual environment and activate it. For instructions on virtual environments for Python, refer to the
@@ -120,9 +120,9 @@ There are currently two request parameters supported by Magpie
 
 | Field  | Description  |
 |---|---|
-| `src`  |The url that needs to be scraped for Metadata. A local request to magpie would be as follows:`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`|
+| `src`  |The url that needs to be scraped for Metadata. A local request to magpie would be as follows:`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`. Multiple src parameters may also be passed to get multiple responses, such as `http://localhost:5000/website?src=https://www.youtube.com/watch?v=Vhh_GeBPOhs&src=https://en.wikipedia.org/wiki/Toronto`|
 | `desc_cap`  | Allows for customization over the length of the `description` field. Default cap is set to 200 characters.   |
-  
+
 
 ## <a name="examples"></a>Response Examples
 A sample of the various types of JSON responses are shown below.
@@ -151,6 +151,72 @@ A sample of the various types of JSON responses are shown below.
         },
         "api_query_url": null
     }
+}
+```
+### <a name="eg_multiple"></a>Multiple Requests
+
+```json
+{
+    "response_count": 2,
+    "responses": [
+        {
+            "status": 200,
+            "request_url": "https://www.youtube.com/watch?v=Vhh_GeBPOhs",
+            "error_message": null,
+            "data": {
+                "files": null,
+                "provider_url": "http://www.youtube.com/",
+                "description": "Uno de los peces gordos de Microsoft, en lo que parece una presentación de esta compañía, no para de hablar de los \"developers\". VISITA: www.MRWUEB.es.kz www...",
+                "title": "Steve Ballmer: Developers",
+                "url": "https://www.youtube.com/watch?v=Vhh_GeBPOhs",
+                "media": {
+                    "count": 1,
+                    "data": [
+                        {
+                            "url": "https://www.youtube.com/embed/Vhh_GeBPOhs?feature=oembed",
+                            "type": "video",
+                            "iframe": "<iframe width=\"459\" height=\"344\" src=\"https://www.youtube.com/embed/Vhh_GeBPOhs?feature=oembed\" frameborder=\"0\" allowfullscreen></iframe>"
+                        }
+                    ]
+                },
+                "favicon": "https://s.ytimg.com/yts/img/favicon-vflz7uhzw.ico",
+                "images": {
+                    "count": 1,
+                    "data": [
+                        {
+                            "url": "https://i.ytimg.com/vi/Vhh_GeBPOhs/hqdefault.jpg"
+                        }
+                    ]
+                },
+                "api_query_url": "http://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=Vhh_GeBPOhs"
+            }
+        },
+        {
+            "status": 200,
+            "request_url": "https://en.wikipedia.org/wiki/Toronto",
+            "error_message": null,
+            "data": {
+                "files": null,
+                "provider_url": "https://en.wikipedia.org/",
+                "description": "Toronto (/təˈrɒntoʊ, -tə/, local /təˈrɒnoʊ, ˈtrɒ-/) is the most populous city in Canada, the provincial capital of Ontario, and the centre of the Greater Toronto Area, the most populous metropolitan a...",
+                "title": "Toronto - Wikipedia, the free encyclopedia",
+                "url": "https://en.wikipedia.org/wiki/Toronto",
+                "media": null,
+                "favicon": null,
+                "images": {
+                    "count": 1,
+                    "data": [
+                        {
+                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Montage_of_Toronto_7.jpg/42px-Montage_of_Toronto_7.jpg",
+                            "width": 42,
+                            "height": 50
+                        }
+                    ]
+                },
+                "api_query_url": null
+            }
+        }
+    ]
 }
 ```
 
@@ -305,6 +371,8 @@ A sample of the various types of JSON responses are shown below.
 | `description`  | The description of the website or document (taken from the description meta tag if present, or from API sources (eg: google drive and dropbox). `null` if none are found. |
 | `media`  | Contains the properties and embedding code for iframe if any are present, such as in the case for YouTube links. `null` if nothing present.|
 | `favicon`  | Contains the URL for the favicon of the website. `null` of nothing could be found.  |
+| `response_count`  | Number of responses returned for  multiple URL requests.  |
+| `responses`  | List of response objects for multiple URL requests.  |
 
 # <a name="contrib"></a>Contributing
 
