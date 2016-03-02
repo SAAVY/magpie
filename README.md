@@ -95,7 +95,7 @@ enable wsgi on apache
 
 ``` virtualenv -p /usr/bin/python2.7 venv ```
 
-rename (`deploy/apache/magpie_api.ex_apache.conf`)[deploy/apache/magpie_api.ex_apache.conf] to `deploy/apache/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
+rename [`deploy/apache/magpie_api.ex_apache.conf`](deploy/apache/magpie_api.ex_apache.conf) to `deploy/apache/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
 
 ``` sudo cp deploy/apache/magpie_api.conf /etc/apache2/sites-available/magpie_api.conf ```
 
@@ -116,11 +116,11 @@ Your server should be accessible!
 #<a name="params"></a>Request and Response parameters
 
 ## <a name="request"></a>Request Parameters
-There are currently two request parameters supported by Magpie
+There are currently two request parameters supported by Magpie  
+
 | Field  | Description  |
 |---|---|
-| `src`  |The url that needs to be scraped for Metadata. A local request to magpie would be as follows: 
-`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`|
+| `src`  |The url that needs to be scraped for Metadata. A local request to magpie would be as follows:`http://localhost:5000/website?src=http://www.youtube.com/watch?v=dQw4w9WgXcQ`|
 | `desc_cap`  | Allows for customization over the length of the `description` field. Default cap is set to 200 characters.   |
   
 
