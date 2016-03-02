@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestWikipediaMetadata(unittest.TestCase):
+class TestErrorMetadata(unittest.TestCase):
 
-    test_url = "https://en.wikipedia.org/wiki/Starbucks"
+    test_url = "http://samiya.ca/about.html"
 
-    def test_wikipedia(self):
+    def test_error(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -22,11 +22,8 @@ class TestWikipediaMetadata(unittest.TestCase):
             json_str = response.response[0]
             json_response = json.loads(json_str)
 
-            self.assertTrue(json_response['data']['title'] is not None)
-            self.assertTrue(json_response['data']['description'] is not None)
-            self.assertTrue(json_response['data']['images']['count'] > 0)
-            self.assertTrue(json_response['data']['title'].lower().find("starbucks") != -1)
-            self.assertEqual(json_response['status'], 200)
+            self.assertEqual(json_response['status'], 404)
+            self.assertTrue(json_response['error_message'] is not None)
 
 
 if __name__ == '__main__':

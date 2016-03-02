@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestWikipediaMetadata(unittest.TestCase):
+class TestFileMetadata(unittest.TestCase):
 
-    test_url = "https://en.wikipedia.org/wiki/Starbucks"
+    test_url = "https://uwaterloo.ca/graduate-studies/sites/ca.graduate-studies/files/uploads/files/2012%20Graduate%20Studies%20Intention%20to%20graduate%20-%20program%20completion%20form.pdf"
 
-    def test_wikipedia(self):
+    def test_file(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -23,9 +23,7 @@ class TestWikipediaMetadata(unittest.TestCase):
             json_response = json.loads(json_str)
 
             self.assertTrue(json_response['data']['title'] is not None)
-            self.assertTrue(json_response['data']['description'] is not None)
-            self.assertTrue(json_response['data']['images']['count'] > 0)
-            self.assertTrue(json_response['data']['title'].lower().find("starbucks") != -1)
+            self.assertTrue(json_response['data']['files']['count'] > 0)
             self.assertEqual(json_response['status'], 200)
 
 

@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestWikipediaMetadata(unittest.TestCase):
+class TestDropboxMetadata(unittest.TestCase):
 
-    test_url = "https://en.wikipedia.org/wiki/Starbucks"
+    test_url = "https://www.dropbox.com/s/t8hep77ze6jypj6/Screenshot%20from%202014-01-07%2020%3A33%3A13.png?dl=0"
 
-    def test_wikipedia(self):
+    def test_dropbox(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -25,7 +25,7 @@ class TestWikipediaMetadata(unittest.TestCase):
             self.assertTrue(json_response['data']['title'] is not None)
             self.assertTrue(json_response['data']['description'] is not None)
             self.assertTrue(json_response['data']['images']['count'] > 0)
-            self.assertTrue(json_response['data']['title'].lower().find("starbucks") != -1)
+            self.assertTrue(json_response['data']['files']['count'] > 0)
             self.assertEqual(json_response['status'], 200)
 
 
