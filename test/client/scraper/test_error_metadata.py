@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestImageUrlMetadata(unittest.TestCase):
+class TestErrorMetadata(unittest.TestCase):
 
-    test_url = "https://goo.gl/x6ZKLz"
+    test_url = "https://github.com/invalidurl"
 
-    def test_image(self):
+    def test_error(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -22,9 +22,8 @@ class TestImageUrlMetadata(unittest.TestCase):
             json_str = response.response[0]
             json_response = json.loads(json_str)
 
-            self.assertTrue(json_response['data']['title'] is not None)
-            self.assertTrue(json_response['data']['images']['count'] == 1)
-            self.assertEqual(json_response['status'], 200)
+            self.assertEqual(json_response['status'], 404)
+            self.assertTrue(json_response['error_message'] is not None)
 
 
 if __name__ == '__main__':

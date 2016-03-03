@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestYoutubeMetadata(unittest.TestCase):
+class TestGeneralMetadata(unittest.TestCase):
 
-    test_url = "https://www.youtube.com/watch?v=_UfFY6PSVu0"
+    test_url = "https://github.com"
 
-    def test_youtube(self):
+    def test_general(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -24,11 +24,8 @@ class TestYoutubeMetadata(unittest.TestCase):
 
             self.assertTrue(json_response['data']['title'] is not None)
             self.assertTrue(json_response['data']['description'] is not None)
-            self.assertTrue(json_response['data']['api_query_url'] is not None)
             self.assertTrue(json_response['data']['favicon'] is not None)
             self.assertTrue(json_response['data']['images']['count'] > 0)
-            self.assertTrue(json_response['data']['media']['count'] > 0)
-            self.assertTrue(json_response['data']['media']['data'][0]['iframe'] is not None)
             self.assertEqual(json_response['status'], 200)
 
 

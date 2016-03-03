@@ -1,32 +1,33 @@
 import unittest
-import mock
-
-# from client.response import Response
-# from client.constants import UrlTypes
-from client.scraper.wikipedia_metadata import WikipediaMetadata
+import json
+from client.query_utils import QueryParams
+from client.constants import ResponseType
+import client.api_handler
+import client.api
 
 
 class TestWikipediaMetadata(unittest.TestCase):
 
-    wikipedia_url = "https://en.wikipedia.org/wiki/Starbucks"
+    test_url = "https://en.wikipedia.org/wiki/Starbucks"
 
-    @mock.patch.object(WikipediaMetadata, 'generic_fetch_content')
-    def test_wikipedia_metadata(self, content):
-        # TODO: fix unit tests
-        pass
-        # with open("test/mocks/wikipedia.html", "r") as testFile:
-        #     data = testFile.read()
+    def test_wikipedia(self):
 
-        # response = Response()
-        # response.set_content("", data, 200, self.wikipedia_url, self.wikipedia_url, UrlTypes.WIKI)
+        query_param = QueryParams()
+        query_param.query_urls = [self.test_url]
+        query_param.desc_length = 500
+        query_param.response_type = ResponseType.JSON
 
-        # content.return_value = response
+        with client.api.app.app_context():
+            response = client.api_handler.get_url_metadata(query_param)
+            json_str = response.response[0]
+            json_response = json.loads(json_str)
 
-        # scraper = WikipediaMetadata(self.wikipedia_url, 200, self.wikipedia_url)
+            self.assertTrue(json_response['data']['title'] is not None)
+            self.assertTrue(json_response['data']['description'] is not None)
+            self.assertTrue(json_response['data']['images']['count'] > 0)
+            self.assertTrue(json_response['data']['title'].lower().find("starbucks") != -1)
+            self.assertEqual(json_response['status'], 200)
 
-        # scraped_response = scraper.prop_map
-        # self.assertTrue(scraped_response['images']['data'][0]['url'] is not None)
-        # self.assertTrue(scraped_response['images']['count'] is 1)
-        # self.assertTrue(scraped_response['title'] is not None)
-        # self.assertTrue(scraped_response['images'] is not None)
-        # self.assertEqual(scraped_response.get("status"), 200)
+
+if __name__ == '__main__':
+    unittest.main()

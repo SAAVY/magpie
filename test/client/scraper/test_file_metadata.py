@@ -6,11 +6,11 @@ import client.api_handler
 import client.api
 
 
-class TestYoutubeMetadata(unittest.TestCase):
+class TestFileMetadata(unittest.TestCase):
 
-    test_url = "https://www.youtube.com/watch?v=_UfFY6PSVu0"
+    test_url = "https://uwaterloo.ca/graduate-studies/sites/ca.graduate-studies/files/uploads/files/2012%20Graduate%20Studies%20Intention%20to%20graduate%20-%20program%20completion%20form.pdf"
 
-    def test_youtube(self):
+    def test_file(self):
 
         query_param = QueryParams()
         query_param.query_urls = [self.test_url]
@@ -23,12 +23,7 @@ class TestYoutubeMetadata(unittest.TestCase):
             json_response = json.loads(json_str)
 
             self.assertTrue(json_response['data']['title'] is not None)
-            self.assertTrue(json_response['data']['description'] is not None)
-            self.assertTrue(json_response['data']['api_query_url'] is not None)
-            self.assertTrue(json_response['data']['favicon'] is not None)
-            self.assertTrue(json_response['data']['images']['count'] > 0)
-            self.assertTrue(json_response['data']['media']['count'] > 0)
-            self.assertTrue(json_response['data']['media']['data'][0]['iframe'] is not None)
+            self.assertTrue(json_response['data']['files']['count'] > 0)
             self.assertEqual(json_response['status'], 200)
 
 
