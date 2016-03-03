@@ -39,6 +39,7 @@ class FieldKeyword(object):
     DESC = "description"
     ERROR_MSG = "error_message"
     EXTRACT = "extract"
+    FROM_CACHE = "from_cache"
     FAVICON = "favicon"
     FILES = "files"
     HEIGHT = "height"

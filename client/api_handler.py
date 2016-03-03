@@ -50,6 +50,23 @@ def get_urls_metadata(query_params):
     return response
 
 
+def get_cached_data(url):
+    """
+    Get cached data for url
+    """
+    logger = current_app.logger
+    data = cache_utils.get_cached_data(url)   # If data from db is None, continue and parse the website
+    if data is not None:
+        logger.debug("FUNC: get_cached_data, Cache hit for key %s", url)
+        data_map = json.loads(data.metadata)
+        json_data = {}
+        json_data[FieldKeyword.REQUEST_URL] = url
+        json_data[FieldKeyword.FROM_CACHE] = True
+        json_data[FieldKeyword.DATA] = data_map
+        return json_data
+    return None
+
+
 def get_metadata(url, response_type, desc_length):
     metadata = None
     content_type = None
@@ -58,6 +75,11 @@ def get_metadata(url, response_type, desc_length):
     logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
     sanitized_url = url_utils.sanitize_url(url)
     logger.debug("Sanitized url: %s" % sanitized_url)
+
+    if config.CACHE_DATA:
+        json_data = get_cached_data(url)
+        if json_data:
+            return get_json_metadata(json_data)
 
     head = url_utils.get_requests_header(sanitized_url)
 
@@ -71,18 +93,20 @@ def get_metadata(url, response_type, desc_length):
         response_code = head.status_code
         metadata = create_metadata_object(url, response_code, sanitized_url, content_type)
 
-    site_response = metadata.fetch_site_data(sanitized_url, response_code)
-
     # Check for caching, otherwise proceed with scraping
     if config.CACHE_DATA:
         data = cache_utils.get_cached_data(sanitized_url)   # If data from db is None, continue and parse the website
         if data is not None:
             logger.debug("Cache hit for key %s", sanitized_url)
             data_map = json.loads(data.metadata)
+            metadata.data_map[FieldKeyword.FROM_CACHE] = True
             metadata.data_map[FieldKeyword.DATA] = data_map
             return get_json_metadata(metadata.data_map)
 
+    site_response = metadata.fetch_site_data(sanitized_url, response_code)
+
     metadata.parse_content(site_response)
+    metadata.data_map[FieldKeyword.FROM_CACHE] = False
 
     # Trim the description if necessary
     trim_description(metadata, desc_length)
