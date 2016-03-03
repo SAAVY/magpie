@@ -23,7 +23,7 @@ class TestImageUrlMetadata(unittest.TestCase):
             json_response = json.loads(json_str)
 
             self.assertTrue(json_response['data']['title'] is not None)
-            self.assertTrue(json_response['data']['images']['count'] > 0)
+            self.assertTrue(json_response['data']['images']['count'] == 1)
             self.assertEqual(json_response['status'], 200)
 
 
