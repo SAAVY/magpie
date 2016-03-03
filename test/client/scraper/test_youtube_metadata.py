@@ -24,6 +24,8 @@ class TestYoutubeMetadata(unittest.TestCase):
 
             self.assertTrue(json_response['data']['title'] is not None)
             self.assertTrue(json_response['data']['description'] is not None)
+            self.assertTrue(json_response['data']['api_query_url'] is not None)
+            self.assertTrue(json_response['data']['favicon'] is not None)
             self.assertTrue(json_response['data']['images']['count'] > 0)
             self.assertTrue(json_response['data']['media']['count'] > 0)
             self.assertTrue(json_response['data']['media']['data'][0]['iframe'] is not None)

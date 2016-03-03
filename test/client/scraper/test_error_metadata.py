@@ -8,7 +8,7 @@ import client.api
 
 class TestErrorMetadata(unittest.TestCase):
 
-    test_url = "http://samiya.ca/about.html"
+    test_url = "https://github.com/invalidurl"
 
     def test_error(self):
 
