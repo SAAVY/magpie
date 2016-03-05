@@ -4,6 +4,8 @@ from urlparse import urlunparse
 
 from constants import StatusCode
 from constants import UrlTypes
+from constants import ImageAttrs
+from constants import MetadataFields
 
 from flask import current_app
 import requests
@@ -75,6 +77,8 @@ def get_domain_url(url):
 
 
 def validate_image_url(image_url, provider_url):
+    if image_url == "":
+        return None
     parsed_image_uri = urlparse(image_url)
 
     parsed_provider_uri = urlparse(provider_url)
@@ -84,7 +88,14 @@ def validate_image_url(image_url, provider_url):
     parsed_image_uri = urlparse(image_url)
     if not parsed_image_uri.netloc:
         image_url = urlunparse((parsed_image_uri.scheme, parsed_provider_uri.netloc, parsed_image_uri.path, "", "", ""))
-    return image_url
+    return image_url.encode('utf-8')
+
+def validate_image(image):
+    if image.has_attr(MetadataFields.HEIGHT) and int(image[MetadataFields.HEIGHT]) < ImageAttrs.MIN_IMAGE_HEIGHT:
+        return False
+    if image.has_attr(MetadataFields.WIDTH) and int(image[MetadataFields.WIDTH]) < ImageAttrs.MIN_IMAGE_WIDTH:
+        return False
+    return True
 
 
 def get_url_type(url, status_code, content_type):

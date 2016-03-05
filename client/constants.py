@@ -75,7 +75,10 @@ class FileTypeValue(object):
 
 class MetadataFields(object):
     IFRAME = "iframe"
+    CONTENT = "content"
     DESCRIPTION = "description"
+    IMAGE = "img"
+    HEIGHT = "height"
     LINK = "link"
     META = "meta"
     NAME = "name"
@@ -87,6 +90,7 @@ class MetadataFields(object):
     SRC = "src"
     TITLE = "title"
     TYPE = "type"
+    WIDTH = "width"
 
 
 class ResponseType(object):

@@ -113,11 +113,6 @@ class Metadata:
             return None
         return self.prop_map[FieldKeyword.IMAGES][FieldKeyword.DATA][0]
 
-    def _get_prepend_url(self, image_url):
-        if image_url.startswith('http') or image_url.startswith('www'):
-            return ''
-        return self.prop_map[FieldKeyword.PROVIDER_URL]
-
     def get_images_list(self, response):
         soup = BeautifulSoup(response.content)
         images_list = collections.OrderedDict()
@@ -125,10 +120,10 @@ class Metadata:
         images_list[FieldKeyword.DATA] = []
 
         images = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_IMAGE})
-        image_attr = 'content'
+        image_attr = MetadataFields.CONTENT
         if len(images) == 0:
-            images = soup.findAll('img')
-            image_attr = 'src'
+            images = soup.findAll(MetadataFields.IMAGE)
+            image_attr = MetadataFields.SRC
             if len(images) == 0:
                 return None
 
@@ -136,14 +131,12 @@ class Metadata:
             image_item_dict = collections.OrderedDict()
             if image.has_attr(image_attr):
                 image_url = image[image_attr]
-                prepend_url = self._get_prepend_url(image_url)
-                if not (image.has_attr('height') and int(image['height']) < ImageAttrs.MIN_IMAGE_HEIGHT):
-                    if image_url is "":
-                        continue
-                    image_item_dict[FieldKeyword.URL] = (prepend_url + image_url).encode('utf-8')
+                image_url = url_utils.validate_image_url(image_url, self.prop_map[FieldKeyword.PROVIDER_URL])
+                if image_url is not None and url_utils.validate_image(image):
+                    image_item_dict[FieldKeyword.URL] = image_url
                     images_list[FieldKeyword.DATA].append(image_item_dict)
                     images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
-                    if images_list[FieldKeyword.COUNT] >= ImageAttrs.MAX_RETURN_IMAGES:
+                    if images_list[FieldKeyword.COUNT] == ImageAttrs.MAX_RETURN_IMAGES:
                         break
         if images_list[FieldKeyword.COUNT] > 0:
             return images_list
