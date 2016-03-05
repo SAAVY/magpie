@@ -90,6 +90,7 @@ def validate_image_url(image_url, provider_url):
         image_url = urlunparse((parsed_image_uri.scheme, parsed_provider_uri.netloc, parsed_image_uri.path, "", "", ""))
     return image_url.encode('utf-8')
 
+
 def validate_image(image):
     if image.has_attr(MetadataFields.HEIGHT) and int(image[MetadataFields.HEIGHT]) < ImageAttrs.MIN_IMAGE_HEIGHT:
         return False
