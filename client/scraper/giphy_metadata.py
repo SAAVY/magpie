@@ -7,12 +7,6 @@ from metadata import Metadata
 
 class GiphyMetadata(Metadata):
 
-    def get_desc(self, response):
-        page = response.wiki_page
-        if page is not None and FieldKeyword.EXTRACT in page:
-            return page[FieldKeyword.EXTRACT]
-        return None
-
     def get_title(self, response):
         return self.data_map[FieldKeyword.REQUEST_URL][6:].strip()
 
