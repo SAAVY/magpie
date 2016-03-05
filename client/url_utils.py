@@ -52,7 +52,7 @@ def sanitize_url(url):
     if(url.lower().startswith('/giphy')):
         query_p1 = "http://api.giphy.com/v1/gifs/search?q="
         query_p3 = "&api_key=dc6zaTOxFJmzC&limit=10"
-        search = url[7:].strip().replace (" ", "+")
+        search = url[7:].strip().replace(" ", "+")
         return query_p1 + search + query_p3
 
     parsed_url = urlparse(url)

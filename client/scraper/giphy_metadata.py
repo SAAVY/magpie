@@ -4,6 +4,7 @@ import json
 from client.constants import FieldKeyword
 from metadata import Metadata
 
+
 class GiphyMetadata(Metadata):
 
     def get_desc(self, response):
@@ -30,7 +31,6 @@ class GiphyMetadata(Metadata):
         if images_list[FieldKeyword.COUNT] > 0:
             return images_list
         return None
-
 
     def fetch_site_data(self, sanitized_url, status_code):
         return self.generic_fetch_content(sanitized_url, status_code)
