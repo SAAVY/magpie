@@ -1,3 +1,9 @@
+class ImageAttrs(object):
+    MIN_IMAGE_HEIGHT = 50
+    MIN_IMAGE_WIDTH = 50
+    MAX_RETURN_IMAGES = 10
+
+
 class StatusCode(object):
     OK = 200
     BAD_REQUEST = 400
@@ -69,7 +75,10 @@ class FileTypeValue(object):
 
 class MetadataFields(object):
     IFRAME = "iframe"
+    CONTENT = "content"
     DESCRIPTION = "description"
+    IMAGE = "img"
+    HEIGHT = "height"
     LINK = "link"
     META = "meta"
     NAME = "name"
@@ -81,6 +90,7 @@ class MetadataFields(object):
     SRC = "src"
     TITLE = "title"
     TYPE = "type"
+    WIDTH = "width"
 
 
 class ResponseType(object):
