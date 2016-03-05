@@ -49,6 +49,12 @@ def get_error(status_code):
 
 
 def sanitize_url(url):
+    if(url.lower().startswith('/giphy')):
+        query_p1 = "http://api.giphy.com/v1/gifs/search?q="
+        query_p3 = "&api_key=dc6zaTOxFJmzC&limit=10"
+        search = url[7:].strip().replace (" ", "+")
+        return query_p1 + search + query_p3
+
     parsed_url = urlparse(url)
     if not re.match('(http|https)', parsed_url.scheme):
         url = 'http://' + url
@@ -105,6 +111,8 @@ def get_url_type(url, status_code, content_type):
         return UrlTypes.ERROR
     parsed_url = urlparse(url)
     netloc_url = parsed_url.netloc
+    if UrlTypes.GIPHY_API in netloc_url:
+        return UrlTypes.GIPHY_API
     if content_type.startswith(UrlTypes.DIRECT_IMAGE):
         return UrlTypes.DIRECT_IMAGE
     if content_type.startswith(UrlTypes.DIRECT_FILE):

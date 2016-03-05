@@ -36,6 +36,7 @@ class UrlTypes(object):
     ERROR = "error"
     DIRECT_IMAGE = "image/"
     DIRECT_FILE = "application/"
+    GIPHY_API = "api.giphy.com"
 
 
 class FieldKeyword(object):
