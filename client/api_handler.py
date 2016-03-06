@@ -17,6 +17,7 @@ from scraper import general_metadata
 from scraper import image_metadata
 from scraper import wikipedia_metadata
 from scraper import youtube_metadata
+from scraper import giphy_metadata
 import url_utils
 from utils.profile import cprofile
 
@@ -128,6 +129,8 @@ def create_metadata_object(url, response_code, sanitized_url, content_type):
         return image_metadata.ImageUrlMetadata(url, response_code, sanitized_url)
     if url_type is UrlTypes.DIRECT_FILE:
         return file_metadata.FileUrlMetadata(url, response_code, sanitized_url)
+    if url_type is UrlTypes.GIPHY_API:
+        return giphy_metadata.GiphyMetadata(url, response_code, sanitized_url)
     if url_type is UrlTypes.GENERAL:
         return general_metadata.GeneralMetadata(url, response_code, sanitized_url)
     return None
