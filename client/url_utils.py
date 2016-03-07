@@ -76,18 +76,27 @@ def get_domain_url(url):
     return provider_url
 
 
-def validate_image_url(image_url, provider_url):
-    if image_url == "":
-        return None
+def validate_image_url(image_url, provider_url, request_head=False, optional_path=None):
     parsed_image_uri = urlparse(image_url)
-
     parsed_provider_uri = urlparse(provider_url)
-    if not parsed_image_uri.netloc:
-        path = parsed_image_uri.path
-        image_url = '{scheme}://{url}'.format(scheme=parsed_provider_uri.scheme, url=path)
-    parsed_image_uri = urlparse(image_url)
-    if not parsed_image_uri.netloc:
-        image_url = urlunparse((parsed_image_uri.scheme, parsed_provider_uri.netloc, parsed_image_uri.path, "", "", ""))
+    path = parsed_image_uri.path
+    netloc = parsed_image_uri.netloc
+    scheme = parsed_image_uri.scheme
+    if image_url.startswith(parsed_provider_uri.netloc):
+        path = path[len(parsed_provider_uri.netloc):]
+    if not netloc:
+        netloc = parsed_provider_uri.netloc
+    if not scheme:
+        scheme = parsed_provider_uri.scheme
+    if not path or path == "/":
+        path = optional_path
+    if not (scheme and netloc and path):
+        return None  # ERROR cannot parse image url
+    image_url = urlunparse((scheme, netloc, path, "", "", ""))
+    if request_head:
+        head = get_requests_header(image_url)
+        if head is None:
+            return None  # ERROR image is invalid
     return image_url.encode('utf-8')
 
 
