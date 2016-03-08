@@ -50,24 +50,24 @@ install and start nginx:
 
 ``` sudo /etc/init.d/nginx start ```
 
-``` sudo git clone https://github.com/SAAVY/magpie.git /var/www/magpie```
+``` sudo git clone https://github.com/SAAVY/magpie.git ~/magpie```
 
-``` cd /var/www/magpie```
+``` cd ~/magpie```
 
-rename (`deploy/nginx/magpie_api.ex_nginx.conf`)[deploy/nginx/magpie_api.ex_nginx.conf] to `deploy/apache/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
+rename [`deploy/nginx/magpie_api.ex_nginx.conf`](deploy/nginx/magpie_api.ex_nginx.conf) to `deploy/nginx/magpie_api.conf` and edit the configuration fields. Copy the conf to sites-available
 
 edit the configuration values in the configuration file.
 
-``` cp deploy/nginx/magpie_api.conf /etc/nginx/sites-available/magpie_api.conf```
+``` sudo cp deploy/nginx/magpie_api.conf /etc/nginx/sites-available/magpie_api.conf```
 
 move config to sites enabled to enable conf
 
 ``` sudo cp /etc/nginx/sites-available/magpie_api.conf /etc/nginx/sites-enabled/magpie_api.conf```
 
-``` sudo virtualenv -p /usr/bin/python2.7 venv```
+``` virtualenv -p /usr/bin/python2.7 venv```
 
 ### <a name="nginx_setup"></a>Running server using Gunicorn
-``` sudo . venv/bin/activate ```
+``` . venv/bin/activate ```
 
 command to run server using gunicorn:
 
@@ -75,7 +75,7 @@ It is recommended to set the number of threads to be `2*<<number of cores on the
 
 Log directory should be where you would like to place the flask log files in
 
-``` sudo gunicorn -w <<# of threads>> -b 127.0.0.1:8000 'client.api:start("<<log directory>>",False)'```
+``` gunicorn -w <<# of threads>> -b 127.0.0.1:8000 'client.api:start("<<log directory>>",False)'```
 
 Your server should now be accessible!
 
