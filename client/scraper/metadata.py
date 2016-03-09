@@ -63,7 +63,6 @@ class Metadata:
     def parse_content(self, response):
         """
         parse_content makes a http request to website stated to get website content.
-        This method should be the only method that makes network calls.
 
         You may call generic_parse_content to help with initial parsing of data
 
