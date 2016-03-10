@@ -144,13 +144,12 @@ class Metadata:
     def get_favicon_url(self, response):
         soup = BeautifulSoup(response.content)
         icon_link = None
-        icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon", MetadataFields.TYPE: "image/x-icon"})
+        icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: lambda x: x and x.lower() == 'icon'})
         if icon_field:
-            icon_link = icon_field['href'].encode('utf-8')
+            icon_link = icon_field['href']
+            icon_link = url_utils.validate_image_url(icon_link, self.prop_map[FieldKeyword.PROVIDER_URL], True, "/favicon.ico")
         else:
-            icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: "icon"})
-        if icon_link:
-            icon_link = url_utils.validate_image_url(icon_link, self.prop_map[FieldKeyword.PROVIDER_URL])
+            icon_link = url_utils.validate_image_url(self.prop_map[FieldKeyword.PROVIDER_URL], self.prop_map[FieldKeyword.PROVIDER_URL], "/favicon.ico", True)
         return icon_link
 
     def get_media_list(self, response):
@@ -193,8 +192,6 @@ class Metadata:
             self.prop_map[FieldKeyword.MEDIA] = self.get_media_list(response)
 
             self.prop_map[FieldKeyword.FILES] = self.get_files_list(response)
-
-            self.prop_map[FieldKeyword.FAVICON] = self.get_favicon_url(response)
 
         except KeyError as e:
             logger.exception("generic_parse_content KeyError Exception: %s" % str(e))
