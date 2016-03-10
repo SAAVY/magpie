@@ -1,5 +1,5 @@
 # set debug to False on non prod env
-IS_DEV = True
+IS_DEV = False
 
 # port for development configuration
 DEV_PORT = 5000

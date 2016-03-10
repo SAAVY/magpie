@@ -123,8 +123,7 @@ def start(log_dir="logs"):
         start gunicorn server with command:
             gunicorn -b 127.0.0.1:8000 'client.api:start("logs")'
     """
-    if config.CACHE_DATA:
-        Redis.init_redis_instance()
+    Redis.init_redis_instance()
     init_logger(log_dir)
     logger = app.logger
     logger.info('Starting Server')

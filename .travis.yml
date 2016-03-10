@@ -9,5 +9,7 @@ script:
   - ./build.sh
 after_success:
   - codecov
+services:
+  - redis-server
 notifications:
   slack: fydpsaavy:haAycUdAeGxxztOPa095IpHl
