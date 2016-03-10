@@ -2,7 +2,7 @@ from flask import current_app
 from flask import Response as FlaskResponse
 
 import cache_utils
-import config
+from config import config
 import collections
 from constants import FieldKeyword
 from constants import StatusCode
@@ -19,22 +19,25 @@ from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 from scraper import giphy_metadata
 import url_utils
-from utils.profile import cprofile
+# from utils.profile import cprofile
 
 
-@cprofile
-def get_url_metadata(query_params):
+# @cprofile
+def get_url_metadata(query_params, return_error=False):
     desc_length = query_params.desc_length
     response_type = query_params.response_type
     url = query_params.query_urls[0].strip()
 
-    metadata = get_metadata(url, response_type, desc_length)
+    if return_error:
+        metadata = generate_error_metadata(url)
+    else:
+        metadata = get_metadata(url, response_type, desc_length)
     response = FlaskResponse(response=metadata, status=StatusCode.OK, mimetype="application/json")
     return response
 
 
-@cprofile
-def get_urls_metadata(query_params):
+# @cprofile
+def get_urls_metadata(query_params, return_error=False):
     urls = query_params.query_urls
     desc_length = query_params.desc_length
     response_type = query_params.response_type
@@ -43,7 +46,10 @@ def get_urls_metadata(query_params):
     json_output['response_count'] = len(urls)
     json_output['responses'] = []
     for url in urls:
-        metadata = get_metadata(url.strip(), response_type, desc_length)
+        if return_error:
+            metadata = generate_error_metadata(url)
+        else:
+            metadata = get_metadata(url.strip(), response_type, desc_length)
         json_output['responses'].append(json.loads(metadata))
 
     multiple_responses = get_json_metadata(json_output)
@@ -85,9 +91,7 @@ def get_metadata(url, response_type, desc_length):
     head = url_utils.get_requests_header(sanitized_url)
 
     if head is None:
-        metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None, None)
-        response_code = StatusCode.BAD_REQUEST
-        sanitized_url = url
+        return generate_error_metadata(url)
     else:
         sanitized_url = url_utils.get_redirect_url(head)
         content_type = url_utils.get_content_type(head)
@@ -110,7 +114,7 @@ def get_metadata(url, response_type, desc_length):
     metadata.data_map[FieldKeyword.FROM_CACHE] = False
 
     # Trim the description if necessary
-    trim_description(metadata, desc_length)
+    format_utils.trim_description(metadata, desc_length)
 
     json_data = get_json_metadata(metadata.data_map)
     logger.info(json_data)
@@ -123,11 +127,15 @@ def get_metadata(url, response_type, desc_length):
     return json_data
 
 
-def trim_description(metadata, desc_length):
-    if metadata.prop_map['description'] is not None:
-        desc = metadata.prop_map['description']
-        desc = (desc[:desc_length] + '...') if len(desc) > desc_length else desc
-        metadata.prop_map['description'] = desc
+def generate_error_metadata(url):
+    response_code = StatusCode.BAD_REQUEST
+    metadata = create_metadata_object(url, StatusCode.BAD_REQUEST, None, None)
+    site_response = metadata.fetch_site_data(url, response_code)
+    status_code, error_msg = url_utils.get_error(response_code)
+    site_response.set_error(status_code, error_msg)
+    metadata.parse_content(site_response)
+
+    return get_json_metadata(metadata.data_map)
 
 
 def get_json_metadata(map):

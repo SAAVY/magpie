@@ -1,7 +1,7 @@
 import cProfile
 import pstats
 
-from client import config
+from config import config
 
 
 def cprofile(func):

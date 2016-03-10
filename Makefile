@@ -12,7 +12,7 @@ dev:
 	PYTHONPATH=. python client/api.py
 
 prod:
-	PYTHONPATH=. gunicorn -w 4 -b 127.0.0.1:8002 'client.api:start("logs",False)'
+	PYTHONPATH=. gunicorn -w 4 -b 127.0.0.1:8002 'client.api:start("logs")'
 
 tests:
 	PYTHONPATH=. nosetests test

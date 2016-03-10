@@ -1,10 +1,10 @@
 from constants import ResponseType
-from config import MAX_DESC_LENGTH
+from config import config
 
 
 class QueryParams:
 
     def __init__(self):
         self.response_type = ResponseType.JSON
-        self.desc_length = MAX_DESC_LENGTH
+        self.desc_length = config.MAX_DESC_LENGTH
         self.query_urls = None

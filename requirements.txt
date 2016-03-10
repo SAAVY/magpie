@@ -8,6 +8,7 @@ flask-cors
 flask==0.10.1
 gunicorn
 mock>=1.3.0
+netaddr
 nose>=1.3.7
 redis>=2.10.5
 requests>=2.9.1

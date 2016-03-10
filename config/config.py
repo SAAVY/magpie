@@ -8,3 +8,9 @@ PROFILE_METHODS = False
 CACHE_DATA = False
 
 MAX_DESC_LENGTH = 200
+
+
+class ImageAttrs(object):
+    MIN_IMAGE_HEIGHT = 50
+    MIN_IMAGE_WIDTH = 50
+    MAX_RETURN_IMAGES = 10
