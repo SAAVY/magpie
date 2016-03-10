@@ -68,6 +68,12 @@ def get_urls_metadata(query_params, return_error=False):
     return response
 
 
+def generate_rate_limit_response():
+    data = {"error": "Rate limit exceeded"}
+    response = FlaskResponse(response=json.dumps(data), status=StatusCode.RATE_LIMIT, mimetype="application/json")
+    return response
+
+
 def generate_bad_request_response(error_msg="Invalid request"):
     data = {"error": error_msg}
     response = FlaskResponse(response=json.dumps(data), status=StatusCode.BAD_REQUEST, mimetype="application/json")
