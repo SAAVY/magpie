@@ -1,9 +1,3 @@
-class ImageAttrs(object):
-    MIN_IMAGE_HEIGHT = 50
-    MIN_IMAGE_WIDTH = 50
-    MAX_RETURN_IMAGES = 10
-
-
 class StatusCode(object):
     OK = 200
     BAD_REQUEST = 400

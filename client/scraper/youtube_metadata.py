@@ -61,7 +61,7 @@ class YoutubeMetadata(Metadata):
         data = self.get_json_data(response)
         if data:
             media_list = {}
-            soup = BeautifulSoup(data["html"])
+            soup = BeautifulSoup(data["html"], "html.parser")
             iframe = soup.find(MetadataFields.IFRAME)
             embed_url = iframe['src']
             media_list[FieldKeyword.DATA] = [

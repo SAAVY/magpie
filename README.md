@@ -75,7 +75,7 @@ It is recommended to set the number of threads to be `2*<<number of cores on the
 
 Log directory should be where you would like to place the flask log files in
 
-``` gunicorn -w <<# of threads>> -b 127.0.0.1:8000 'client.api:start("<<log directory>>",False)'```
+``` sudo gunicorn -w <<# of threads>> -b 127.0.0.1:8000 'client.api:start("<<log directory>>")'```
 
 Your server should now be accessible!
 

@@ -1,6 +1,7 @@
-from client.api import app
 import unittest
 import json
+
+from client.api import app
 from client.query_utils import QueryParams
 from client.constants import ResponseType
 import client.api

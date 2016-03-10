@@ -4,18 +4,21 @@ import sys
 
 from flask import Flask
 from flask import request
+from flask.ext.cors import CORS
 
 import api_handler
+import blacklist
 from cache.connection import RedisInstance as Redis
-import config
+from config import config
 from query_utils import QueryParams
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
 def home_page():
-    return ""
+    return "", 200
 
 
 @app.route('/healthcheck')
@@ -25,6 +28,7 @@ def health_check():
 
 @app.route('/website', methods=['GET'])
 def get_metadata():
+    logger = app.logger
     urls = request.args.getlist('src')
     query_params = QueryParams()
     local_request = request
@@ -37,8 +41,6 @@ def get_metadata():
         query_params.desc_length = int(desc_length)
     if response_type is not None:
         query_params.response_type = response_type
-
-    logger = app.logger
 
     try:
         if len(urls) == 1:
@@ -84,22 +86,23 @@ def init_logger(log_directory):
     app.logger.addHandler(get_file_warn_log_handler(log_directory))
 
 
-def start(log_dir="logs", cache=False):
+def start(log_dir="logs"):
     """
         Start app with gunicorn
 
         Params:
         log_directory -- the directory where logs are, default log directory is logs
-        cache -- whether to cache data to redis instance, default to False
 
         start gunicorn server with command:
-            gunicorn -b 127.0.0.1:8000 'client.api:start("logs",False)'
+            gunicorn -b 127.0.0.1:8000 'client.api:start("logs")'
     """
-    if cache:
+    if config.CACHE_DATA:
         Redis.init_redis_instance()
     init_logger(log_dir)
     logger = app.logger
     logger.info('Starting Server')
+    blacklist.build_inc_request_blacklist(logger)
+    blacklist.build_website_blacklist(logger)
     return app
 
 
@@ -110,11 +113,5 @@ if __name__ == '__main__':
         start development server with command:
             python client/api.py
     """
-    if config.CACHE_DATA:
-        Redis.init_redis_instance()
-    default_log_dir = "logs"
-    init_logger(default_log_dir)
-    logger = app.logger
-    logger.info('Starting Server')
+    app = start()
     app.run(debug=config.IS_DEV)
-    logger.info('Stopping Server')

@@ -4,12 +4,11 @@ import collections
 from flask import current_app
 import requests
 
-from client import config
 from client import url_utils
 from client.constants import FieldKeyword
-from client.constants import ImageAttrs
 from client.constants import MetadataFields
 from client.response import Response
+from config import config
 
 
 class Metadata:
@@ -79,7 +78,7 @@ class Metadata:
         return self.prop_map
 
     def get_title(self, response):
-        soup = BeautifulSoup(response.content)
+        soup = BeautifulSoup(response.content, "html.parser")
         title_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_TITLE})
         title = None
         if len(title_html) == 0:
@@ -94,7 +93,7 @@ class Metadata:
         return title
 
     def get_desc(self, response):
-        soup = BeautifulSoup(response.content)
+        soup = BeautifulSoup(response.content, "html.parser")
         desc_html = soup.findAll(MetadataFields.META, attrs={MetadataFields.PROPERTY: MetadataFields.OG_DESC})
         desc = None
         if len(desc_html) == 0:
@@ -113,7 +112,7 @@ class Metadata:
         return self.prop_map[FieldKeyword.IMAGES][FieldKeyword.DATA][0]
 
     def get_images_list(self, response):
-        soup = BeautifulSoup(response.content)
+        soup = BeautifulSoup(response.content, "html.parser")
         images_list = collections.OrderedDict()
         images_list[FieldKeyword.COUNT] = 0
         images_list[FieldKeyword.DATA] = []
@@ -131,18 +130,18 @@ class Metadata:
             if image.has_attr(image_attr):
                 image_url = image[image_attr]
                 image_url = url_utils.validate_image_url(image_url, self.prop_map[FieldKeyword.PROVIDER_URL])
-                if image_url is not None and url_utils.validate_image(image):
+                if image_url is not None and url_utils.validate_image_dimensions(image):
                     image_item_dict[FieldKeyword.URL] = image_url
                     images_list[FieldKeyword.DATA].append(image_item_dict)
                     images_list[FieldKeyword.COUNT] = images_list[FieldKeyword.COUNT] + 1
-                    if images_list[FieldKeyword.COUNT] == ImageAttrs.MAX_RETURN_IMAGES:
+                    if images_list[FieldKeyword.COUNT] == config.ImageAttrs.MAX_RETURN_IMAGES:
                         break
         if images_list[FieldKeyword.COUNT] > 0:
             return images_list
         return None
 
     def get_favicon_url(self, response):
-        soup = BeautifulSoup(response.content)
+        soup = BeautifulSoup(response.content, "html.parser")
         icon_link = None
         icon_field = soup.find(MetadataFields.LINK, attrs={MetadataFields.REL: lambda x: x and x.lower() == 'icon'})
         if icon_field:
