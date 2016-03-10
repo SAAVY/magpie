@@ -1,17 +1,27 @@
+LOCALHOST = "127.0.0.1"
+
+# This is a public api key, as found in https://github.com/Giphy/GiphyAPI
+GIPHY_API_KEY = "dc6zaTOxFJmzC"
+
+
 class StatusCode(object):
     OK = 200
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
     FORBIDDEN = 403
     NOT_FOUND = 404
+    RATE_LIMIT = 429
     INTERNAL_SERVER_ERROR = 500
+    SERVICE_UNAVAILABLE = 503
     WEBSITE_REQUEST_ERROR = 550
 
     status_codes = {OK: "OK",
                     NOT_FOUND: "Page Not Found",
                     INTERNAL_SERVER_ERROR: "Internal Server Error",
+                    SERVICE_UNAVAILABLE: "Service Unavailable",
                     BAD_REQUEST: "Bad Request",
                     UNAUTHORIZED: "Unauthorized",
+                    RATE_LIMIT: "Too Many Requests",
                     FORBIDDEN: "Forbidden",
                     WEBSITE_REQUEST_ERROR: "Website Request Error"}
 

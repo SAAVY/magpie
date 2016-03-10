@@ -2,6 +2,7 @@ import redis
 
 from data import MagpieData
 from exceptions import MagpieCacheError
+from config import config
 
 
 class RedisInstance(object):
@@ -9,7 +10,8 @@ class RedisInstance(object):
     redis_instance = None
 
     def _establish_db_connection(self):
-        self.pool = redis.ConnectionPool(host='localhost', port=6379, db=0)  # db=0 denotes the default redis database.
+        self.pool = redis.ConnectionPool(host=config.REDIS_HOST,
+                                         port=config.REDIS_PORT, db=0)  # db=0 denotes the default redis database.
         self.redis = redis.StrictRedis(connection_pool=self.pool)
 
     def __init__(self):

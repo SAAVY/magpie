@@ -8,6 +8,7 @@ import requests
 
 import blacklist
 from config import config
+from constants import GIPHY_API_KEY
 from constants import StatusCode
 from constants import UrlTypes
 from constants import MetadataFields
@@ -90,13 +91,17 @@ def get_error(status_code):
         return StatusCode.NOT_FOUND, StatusCode.get_status_message(StatusCode.NOT_FOUND)
     if status_code == StatusCode.INTERNAL_SERVER_ERROR:
         return StatusCode.INTERNAL_SERVER_ERROR, StatusCode.get_status_message(StatusCode.INTERNAL_SERVER_ERROR)
+    if status_code == StatusCode.RATE_LIMIT:
+        return StatusCode.RATE_LIMIT, StatusCode.get_status_message(StatusCode.RATE_LIMIT)
+    if status_code >= 400 and status_code < 500:
+        return status_code, None
     return StatusCode.OK, None
 
 
 def sanitize_url(url):
     if(url.lower().startswith('/giphy')):
         query_p1 = "http://api.giphy.com/v1/gifs/search?q="
-        query_p3 = "&api_key=dc6zaTOxFJmzC&limit=10"
+        query_p3 = "&api_key=" + GIPHY_API_KEY + "&limit=10"
         search = url[7:].strip().replace(" ", "+")
         return query_p1 + search + query_p3
 

@@ -22,3 +22,6 @@ clean:
 
 clean-logs:
 	rm -r logs/*
+
+db:
+	redis-server

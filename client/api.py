@@ -5,25 +5,52 @@ import sys
 from flask import Flask
 from flask import request
 from flask.ext.cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 import api_handler
 import blacklist
 from cache.connection import RedisInstance as Redis
+import cache_utils
+import constants
+from constants import StatusCode
 from config import config
 from query_utils import QueryParams
 
 app = Flask(__name__)
 CORS(app)
 
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    storage_uri="redis://%s:%s" % (config.REDIS_HOST, config.REDIS_PORT),
+    global_limits=config.GLOBAL_RATE_LIMIT
+)
+
+
+@limiter.request_filter
+def ip_whitelist():
+    return request.remote_addr == constants.LOCALHOST
+
+
+@app.errorhandler(StatusCode.RATE_LIMIT)
+def ratelimit_handler(e):
+    return api_handler.generate_rate_limit_response()
+
 
 @app.route('/')
+@limiter.exempt
 def home_page():
-    return "", 200
+    return "", StatusCode.OK
 
 
 @app.route('/healthcheck')
+@limiter.exempt
 def health_check():
-    return "Success!", 200
+    if cache_utils.is_redis_available():
+        return "Success!", StatusCode.OK
+    return "Failure", StatusCode.SERVICE_UNAVAILABLE
 
 
 @app.route('/website', methods=['GET'])
@@ -96,8 +123,7 @@ def start(log_dir="logs"):
         start gunicorn server with command:
             gunicorn -b 127.0.0.1:8000 'client.api:start("logs")'
     """
-    if config.CACHE_DATA:
-        Redis.init_redis_instance()
+    Redis.init_redis_instance()
     init_logger(log_dir)
     logger = app.logger
     logger.info('Starting Server')
@@ -114,4 +140,4 @@ if __name__ == '__main__':
             python client/api.py
     """
     app = start()
-    app.run(debug=config.IS_DEV)
+    app.run(debug=config.IS_DEV, port=config.DEV_PORT)
