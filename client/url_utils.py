@@ -13,6 +13,10 @@ from constants import UrlTypes
 from constants import MetadataFields
 
 
+class BlacklistUrlException(Exception):
+    pass
+
+
 def http_get_response_patch(self, *args, **kwargs):
     response = _old_getresponse(self, *args, **kwargs)
     if self.sock:
@@ -20,7 +24,7 @@ def http_get_response_patch(self, *args, **kwargs):
         ip_address = response.peer[0]
         port = response.peer[1]
         if blacklist.is_website_blacklisted(ip_address, port):
-            return None
+            raise BlacklistUrlException()
     else:
         response.peer = None
     return response
@@ -38,9 +42,11 @@ def get_requests_header(url):
         ip_address = peer[0]
         port = peer[1]
         if blacklist.is_website_blacklisted(ip_address, port):
-            return None
+            raise BlacklistUrlException()
     except AttributeError as e:
         logger.exception("get_requests_header AttributeError: %s" % str(e))
+    except BlacklistUrlException:
+        raise BlacklistUrlException("url: %s is in blacklisted ip network file" % url)
     except Exception as e:
         logger.exception("get_requests_header Exception: %s" % str(e))
     return head
@@ -53,6 +59,8 @@ def get_requests_content(url):
         response = requests.get(url, allow_redirects=True)
     except AttributeError as e:
         logger.exception("get_requests_header AttributeError: %s" % str(e))
+    except BlacklistUrlException as e:
+        raise BlacklistUrlException("url: %s is in blacklisted ip network file" % url)
     except Exception as e:
         logger.exception("get_requests_header Exception: %s" % str(e))
     return response.content

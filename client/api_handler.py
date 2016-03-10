@@ -19,25 +19,36 @@ from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 from scraper import giphy_metadata
 import url_utils
-# from utils.profile import cprofile
+from url_utils import BlacklistUrlException
 
 
-# @cprofile
+def get_logger():
+    return current_app.logger
+
+
 def get_url_metadata(query_params, return_error=False):
+    if return_error:
+        return generate_bad_request_response()
+
+    logger = get_logger()
     desc_length = query_params.desc_length
     response_type = query_params.response_type
     url = query_params.query_urls[0].strip()
 
-    if return_error:
-        metadata = generate_error_metadata(url)
-    else:
+    try:
         metadata = get_metadata(url, response_type, desc_length)
+    except BlacklistUrlException as e:
+        logger.warn("BlacklistUrlException: %s " % str(e))
+        return generate_bad_request_response("Invalid url requested")
     response = FlaskResponse(response=metadata, status=StatusCode.OK, mimetype="application/json")
     return response
 
 
-# @cprofile
 def get_urls_metadata(query_params, return_error=False):
+    if return_error:
+        return generate_bad_request_response()
+
+    logger = get_logger()
     urls = query_params.query_urls
     desc_length = query_params.desc_length
     response_type = query_params.response_type
@@ -45,15 +56,21 @@ def get_urls_metadata(query_params, return_error=False):
     json_output = collections.OrderedDict()
     json_output['response_count'] = len(urls)
     json_output['responses'] = []
-    for url in urls:
-        if return_error:
-            metadata = generate_error_metadata(url)
-        else:
+    try:
+        for url in urls:
             metadata = get_metadata(url.strip(), response_type, desc_length)
-        json_output['responses'].append(json.loads(metadata))
-
+            json_output['responses'].append(json.loads(metadata))
+    except BlacklistUrlException as e:
+        logger.warn("BlacklistUrlException: %s " % str(e))
+        return generate_bad_request_response("Invalid url requested")
     multiple_responses = get_json_metadata(json_output)
     response = FlaskResponse(response=multiple_responses, status=StatusCode.OK, mimetype="application/json")
+    return response
+
+
+def generate_bad_request_response(error_msg="Invalid request"):
+    data = {"error": error_msg}
+    response = FlaskResponse(response=json.dumps(data), status=StatusCode.BAD_REQUEST, mimetype="application/json")
     return response
 
 
@@ -61,7 +78,7 @@ def get_cached_data(url):
     """
     Get cached data for url
     """
-    logger = current_app.logger
+    logger = get_logger()
     data = cache_utils.get_cached_data(url)   # If data from db is None, continue and parse the website
     if data is not None:
         logger.debug("FUNC: get_cached_data, Cache hit for key %s", url)
@@ -78,7 +95,7 @@ def get_metadata(url, response_type, desc_length):
     metadata = None
     content_type = None
     response_code = None
-    logger = current_app.logger
+    logger = get_logger()
     logger.debug("FUNC: get_metadata, url: %s, response_type: %s" % (url, response_type))
     sanitized_url = url_utils.sanitize_url(url)
     logger.debug("Sanitized url: %s" % sanitized_url)
@@ -143,7 +160,7 @@ def get_json_metadata(map):
 
 
 def create_metadata_object(url, response_code, sanitized_url, content_type):
-    logger = current_app.logger
+    logger = get_logger()
     logger.debug("FUNC: create_metadata_object, URL: %s, response_code: %d, sanitized_url: %s, content_type: %s" %
                  (url, response_code, sanitized_url, content_type))
     url_type = url_utils.get_url_type(sanitized_url, response_code, content_type)
