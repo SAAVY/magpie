@@ -29,6 +29,14 @@ class RedisInstance(object):
             return None
         return MagpieData(url, data)
 
+    def is_available(self):
+        try:
+            self.redis.get(None)  # getting None returns None or throws an exception
+        except (redis.exceptions.ConnectionError,
+                redis.exceptions.BusyLoadingError):
+            return False
+        return True
+
     @staticmethod
     def init_redis_instance():
         RedisInstance.redis_instance = RedisInstance()

@@ -127,7 +127,6 @@ def start(log_dir="logs"):
     init_logger(log_dir)
     logger = app.logger
     logger.info('Starting Server')
-    blacklist.build_inc_request_blacklist(logger)
     blacklist.build_website_blacklist(logger)
     return app
 
