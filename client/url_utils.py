@@ -18,6 +18,10 @@ class BlacklistUrlException(Exception):
     pass
 
 
+class RequestTimeoutException(Exception):
+    pass
+
+
 def http_get_response_patch(self, *args, **kwargs):
     response = _old_getresponse(self, *args, **kwargs)
     if self.sock:
@@ -48,6 +52,8 @@ def get_requests_header(url):
         logger.exception("get_requests_header AttributeError: %s" % str(e))
     except BlacklistUrlException:
         raise BlacklistUrlException("url: %s is in blacklisted ip network file" % url)
+    except requests.exceptions.Timeout as e:
+        raise RequestTimeoutException("url: %s has timed out" % url)
     except Exception as e:
         logger.exception("get_requests_header Exception: %s" % str(e))
     return head
@@ -62,6 +68,8 @@ def get_requests_content(url):
         logger.exception("get_requests_header AttributeError: %s" % str(e))
     except BlacklistUrlException as e:
         raise BlacklistUrlException("url: %s is in blacklisted ip network file" % url)
+    except requests.exceptions.Timeout as e:
+        raise RequestTimeoutException("url: %s has timed out" % url)
     except Exception as e:
         logger.exception("get_requests_header Exception: %s" % str(e))
     return response

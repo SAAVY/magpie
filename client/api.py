@@ -13,7 +13,6 @@ import api_handler
 import blacklist
 from cache.connection import RedisInstance as Redis
 import cache_utils
-import constants
 from constants import StatusCode
 from config import config
 from query_utils import QueryParams
@@ -27,11 +26,6 @@ limiter = Limiter(
     storage_uri="redis://%s:%s" % (config.REDIS_HOST, config.REDIS_PORT),
     global_limits=config.GLOBAL_RATE_LIMIT
 )
-
-
-@limiter.request_filter
-def ip_whitelist():
-    return request.remote_addr == constants.LOCALHOST
 
 
 @app.errorhandler(StatusCode.RATE_LIMIT)
