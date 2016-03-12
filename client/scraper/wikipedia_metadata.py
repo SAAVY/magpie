@@ -5,10 +5,10 @@ import collections
 from flask import current_app
 import json
 import re
-import requests
 
 from client.constants import FieldKeyword
 from metadata import Metadata
+from client import url_utils
 
 
 class WikipediaMetadata(Metadata):
@@ -68,7 +68,7 @@ class WikipediaMetadata(Metadata):
         if path is not None:
             title = path.group(1)
             try:
-                web_request = requests.get(self.build_fetch_data_url(title))
+                web_request = url_utils.get_requests_content(self.build_fetch_data_url(title))
                 json_data = json.loads(web_request.content)
                 if "warnings" in json_data and json_data["warnings"]:
                     print "WARNING: Error with wikipedia query: ", json_data["warnings"]['main']

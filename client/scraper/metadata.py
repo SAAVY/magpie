@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 
 import collections
 from flask import current_app
-import requests
 
 from client import url_utils
 from client.constants import FieldKeyword
@@ -162,7 +161,7 @@ class Metadata:
         logger.debug("generic_fetch_content, request_url: %s status_code: %d" % (request_url, status_code))
         response = Response()
 
-        request = requests.get(request_url)
+        request = url_utils.get_requests_content(request_url)
         redirect_url = request.url
 
         provider_url = url_utils.get_domain_url(redirect_url)
