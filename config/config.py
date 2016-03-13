@@ -29,3 +29,9 @@ REDIS_PORT = '6379'
 # global limit for rate limiter; see http://flask-limiter.readthedocs.org/en/stable/#ratelimit-string
 # for formatting
 GLOBAL_RATE_LIMIT = ["100/minute", "5/second"]
+
+# request timeout in # seconds
+# take in a tuple (connect timeout, read timeout)
+# see http://docs.python-requests.org/en/master/user/advanced/#timeouts
+# the read timeout is the number of seconds the client will wait for the server to send a response
+REQUEST_TIMEOUT = (3.05, 10)

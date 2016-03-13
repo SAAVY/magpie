@@ -13,7 +13,7 @@ class StatusCode(object):
     RATE_LIMIT = 429
     INTERNAL_SERVER_ERROR = 500
     SERVICE_UNAVAILABLE = 503
-    WEBSITE_REQUEST_ERROR = 550
+    REQUEST_TIMEOUT = 408
 
     status_codes = {OK: "OK",
                     NOT_FOUND: "Page Not Found",
@@ -23,7 +23,7 @@ class StatusCode(object):
                     UNAUTHORIZED: "Unauthorized",
                     RATE_LIMIT: "Too Many Requests",
                     FORBIDDEN: "Forbidden",
-                    WEBSITE_REQUEST_ERROR: "Website Request Error"}
+                    REQUEST_TIMEOUT: "Request Timeout"}
 
     @staticmethod
     def get_status_message(code):

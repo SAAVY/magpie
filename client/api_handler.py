@@ -19,7 +19,7 @@ from scraper import wikipedia_metadata
 from scraper import youtube_metadata
 from scraper import giphy_metadata
 import url_utils
-from url_utils import BlacklistUrlException
+from url_utils import BlacklistUrlException, RequestTimeoutException
 
 
 def get_logger():
@@ -40,6 +40,9 @@ def get_url_metadata(query_params, return_error=False):
     except BlacklistUrlException as e:
         logger.warn("BlacklistUrlException: %s " % str(e))
         return generate_bad_request_response("Invalid url requested")
+    except RequestTimeoutException as e:
+        logger.warn("RequestTimeoutException: %s " % str(e))
+        return generate_timeout_response(e.strerror)
     response = FlaskResponse(response=metadata, status=StatusCode.OK, mimetype="application/json")
     return response
 
@@ -63,6 +66,10 @@ def get_urls_metadata(query_params, return_error=False):
     except BlacklistUrlException as e:
         logger.warn("BlacklistUrlException: %s " % str(e))
         return generate_bad_request_response("Invalid url requested")
+    except RequestTimeoutException as e:
+        logger.warn("RequestTimeoutException: %s " % str(e))
+        return generate_timeout_response(e.strerror)
+
     multiple_responses = get_json_metadata(json_output)
     response = FlaskResponse(response=multiple_responses, status=StatusCode.OK, mimetype="application/json")
     return response
@@ -77,6 +84,12 @@ def generate_rate_limit_response():
 def generate_bad_request_response(error_msg="Invalid request"):
     data = {"error": error_msg}
     response = FlaskResponse(response=json.dumps(data), status=StatusCode.BAD_REQUEST, mimetype="application/json")
+    return response
+
+
+def generate_timeout_response(error_msg="Request has timed out"):
+    data = {"error": error_msg}
+    response = FlaskResponse(response=json.dumps(data), status=StatusCode.REQUEST_TIMEOUT, mimetype="application/json")
     return response
 
 
