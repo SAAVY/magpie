@@ -20,24 +20,39 @@ Magpie supports retrieving metadata from all websites that provide meta tags. Ma
 
 ## <a name="setup"></a>Getting Started
 
-### <a name="setup"></a>Installation
-Since Magpie is a Python based application, please make sure you have Python 2.7.x installed before proceeding further.  
+### <a name="setup"></a>Local setup
+Since Magpie is a Python based application, please make sure you have `Python 2.7.x` installed before proceeding further.  
 
   1. Clone the repository  
-        ``` git clone https://github.com/SAAVY/magpie.git ```  
-  2. Make a Python virtual environment and activate it. For instructions on virtual environments for Python, refer to the
-  [virtualenv] (http://virtualenv.readthedocs.org/en/latest/installation.html) documentation  
-  3. Once the virtual environment has been activated, cd into the magpie directory and run ```make install```  
+        ``` git clone https://github.com/SAAVY/magpie.git ```
+  2. Ensure you have `redis-server` installed on your local environment see [http://redis.io/topics/quickstart](http://redis.io/topics/quickstart)
+  3. Make a Python virtual environment and activate it. For instructions on virtual environments for Python, refer to the
+  [virtualenv](http://virtualenv.readthedocs.org/en/latest/installation.html) documentation  
+  4. Once the virtual environment has been activated, cd into the magpie directory and run ```make install```  
   This will install all the library requirements for Magpie. A list of all libraries used in this project can be found in requirements.txt    
 
 Magpie is now installed on your computer! Note that Magpie runs on Flask.  
 
 ### <a name="run_app"></a>Running the Application
-To run the application locally, simply run `make build dev` from the root of the project directory. Magpie will then launch on port 5000
+To run the application locally, simply run `make dev` from the root of the project directory. Magpie will then launch on the port set in `config/config.py`
 on your localhost.
 
 #<a name="setup"></a>Deployment
 To support multiple configuration servers, Magpie recommends using either gunicorn or wsgi.
+
+## <a name="nginx_setup"></a>Database Setup
+Currently, magpie supports Redis as the cache for saving metadata as well as rate limiting features.
+If you are running your server on aws you can do the following to install `redis-server` on your machine.
+See [http://redis.io/topics/quickstart](http://redis.io/topics/quickstart) for more information.
+
+```
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+```
+
+To run redis on the default host & port `localhost:6379`, just run the command `redis-server`
 
 ## <a name="nginx_setup"></a>Nginx Setup
 If you are running an nginx webserver, Magpie recommends using [gunicorn](http://gunicorn.org/) to serve the flask server.
@@ -112,6 +127,26 @@ copy the wsgi file to root directory, edit secret key in file
 ``` sudo service apache2 reload ```
 
 Your server should be accessible!
+
+#<a name="config"></a>Custom Configuration
+In `config/config.py` there are multiple custom configuration variables to configure your api to your liking.
+
+The following variables are currently supported:
+
+| Variable  | Description  |
+|---|---|
+| `IS_DEV`           | Debug mode, default is `False`
+| `DEV_PORT`         | The port for running flask app locally, default is `5000`
+| `PROFILE_METHODS`  | Profile methods speed and output to terminal (intended only on dev), default is `False` 
+| `CACHE_DATA`       | Whether to cache data to redis machine. Note you will still need to have redis on for rate limiting, default is `False`
+| `ImageAttrs.MIN_IMAGE_HEIGHT`   | The filter for checking for minimum image dimensions height attribute, default is `50`
+| `ImageAttrs.MIN_IMAGE_WIDTH`    | The filter for checking for minimum image dimensions width attribute, default is `50`
+| `ImageAttrs.MAX_RETURN_IMAGES`  | The filter max number of images returned, default is `10`
+| `REDIS_HOST`       | Where the redis-server host is, default is `127.0.0.1`
+| `REDIS_PORT`       | Where the redis-server port is, default is `6379`
+| `GLOBAL_RATE_LIMIT`| Global limit for rate limiter; see http://flask-limiter.readthedocs.org/en/stable/#ratelimit-string, default is `["100/minute", "5/second"]`
+| `REQUEST_TIMEOUT` | The max request time for hitting a url in seconds, takes in a tuple (connect timeout, read timeout). The default is `(3.05, 10)`
+
 
 #<a name="params"></a>Request and Response parameters
 
