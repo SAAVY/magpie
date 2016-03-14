@@ -96,7 +96,7 @@ Your server should now be accessible!
 
 
 ## <a name="apache_setup"></a>Recommended Apache Setup
-If you are running an apache webserver, Magpie recommends using [mod_wsig](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/) to serve the flask server.
+If you are running an apache webserver, Magpie recommends using [mod_wsgi](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/) to serve the flask server.
 
 Steps to installing apache-wsgi & running wsgi application:
 ``` apt-get install libapache2-mod-wsgi ```
